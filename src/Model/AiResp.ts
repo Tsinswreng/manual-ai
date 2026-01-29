@@ -1,0 +1,75 @@
+/** AI回答 之 操作類型 */
+export type EOperateType =
+|'explain'//講解。給人看 不與編輯器交互
+|'replaceByLine'//按行號替換
+|'replaceBySnippet'//按文本替換
+|'readFiles'//讀多個文件
+|'seekDef'//查找符號定義
+
+export interface I_type{
+	type:EOperateType
+}
+
+export interface IOperation extends I_type{
+
+}
+
+/** 講解。給人看 不與編輯器交互 */
+export interface IOpExplain extends IOperation{
+	text: string
+}
+
+/** 依行號替換文件 
+ * 實現時需倒序執行 若正序則行號錯亂
+ * 適用于 AI初次答旹。若用戶同意AI之改、則行號既變、後續追問旹則不可復依行號替換，需用文本片段匹配
+ * 文件芝發予AI者皆帶行號、AI當不會數錯
+ */
+export interface IOpReplaceByLine extends IOperation{
+	/** 文件不存在時 自動創建
+	 * 如需新建並寫入文件、則把path設爲新路徑、把始行與末行皆設爲0、data設爲要寫入的內容
+	 */
+	path: string
+	/** 從1始 */
+	startLine: number
+	endLine: number
+	data: string
+}
+
+
+/**
+ * 按文本片段匹配替換
+ * 
+ */
+export interface IOpReplaceBySnippet extends IOperation{
+	path: string
+	/**
+	 * 爲防止錯配(即一個文件中匹配到多個相同的文本片段)、match應足夠長
+	 * match應與原文出現的代碼片段嚴格相同、包括縮進, 首尾空白, 其他地方的空白符號等。
+	 * 用戶的提問會經過正規化，其中的換行符統一用\n
+	 */
+	match: string
+	replacement: string
+}
+
+/** 查找符號定義 */
+export interface IOpSeekDef extends IOperation{
+	path: string
+	line: number
+	//col?: number //本欲用于精細定位與消岐、今則暫定不設
+	symbol: string
+}
+
+/** AI再請求讀多個文件
+ * 當AI認爲需要讀其他文件時，會在回答中發出此請求、用戶則在下輪輸出 加上文件內容
+ */
+export interface IOpReadFiles extends IOperation{
+	paths: string[]
+}
+
+
+/** AI 格式化輸出 */
+export interface IOperations{
+	operations: IOperation[]
+}
+
+

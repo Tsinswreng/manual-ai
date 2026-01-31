@@ -36,7 +36,9 @@ export interface ILineRangeReplace{
 	startLine: number
 	/** 含。可大於文件總行數。 */
 	endLine: number
-	/** 序列化爲yaml時 要用多行文本塊語法 */
+	/** 序列化爲yaml時 要用多行文本塊語法 
+	 * 注意: yaml中應當用 xxx: |- 而不是 xxx: | 因為後者會在末尾多加一個換行符
+	 */
 	data: string
 }
 
@@ -50,7 +52,7 @@ export interface IOpReplaceByLine extends
 	,IOpWriteFile
 {
 	/** 文件不存在時 自動創建
-	 * 如需新建並寫入文件、則把path設爲新路徑、把始行與末行皆設爲0、data設爲要寫入的內容
+	 * 如需新建並寫入文件、則把path設爲新路徑、把始行與末行皆設爲1、data設爲要寫入的內容
 	 */
 	path: string
 	/**
@@ -65,10 +67,12 @@ export interface ISnippetReplace extends IFromEtToYaml{
 	 * match應與原文出現的代碼片段嚴格相同、包括縮進, 首尾空白, 其他地方的空白符號等。
 	 * 用戶的提問會經過正規化，其中的換行符統一用\n
 	 * 用yaml多行文本塊語法
+	 * 注意: yaml中應當用 xxx: |- 而不是 xxx: | 因為後者會在末尾多加一個換行符
 	 */
 	match: string
 	/**
 	 * 用yaml多行文本塊語法
+	 * 注意: yaml中應當用 xxx: |- 而不是 xxx: | 因為後者會在末尾多加一個換行符
 	 */
 	replacement: string
 
@@ -107,7 +111,7 @@ export interface IOpReadFiles extends IOperation{
 /** AI 格式化輸出 */
 export interface IAiResp extends IFromEtToYaml{
 	/** 對應請求的Unix時間戳。
-	 * 因 是網頁AI、使AI答今之時間則不善
+	 * 因 是網頁AI、使AI答今之時間則不善。故爲代碼中處理後自動添加
 	 */
 	reqUnixMs?:number
 	operations: IOperation[]

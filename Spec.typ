@@ -26,3 +26,18 @@
 
 ]
 
+#H[異步函數][
+	命名規範:
+	- 不受 CT 作末個參數的: 名稱帶Asy後綴
+	- 受 CT 作末個參數的: 名稱不帶後綴
+	CT在 `src/CT.ts`。使用CT時必須寫`CT`、禁止寫`CancellationToken`
+
+	例:
+	```ts
+	function readFile(path: string, ct?:CT): Promise<string>;//推薦。即使你不用ct也建議這樣寫
+	function readFileAsy(path: string): Promise<string>;
+	```
+	
+	建議儘量都帶CT作末個參數
+]
+

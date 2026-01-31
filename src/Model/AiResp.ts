@@ -7,7 +7,7 @@ export type EOperateType =
 |'replaceBySnippet'//按文本替換
 |'readFiles'//讀多個文件
 |'seekDef'//查找符號定義
-
+//TODO 重命名符號
 
 export interface I_path{
 	path:string

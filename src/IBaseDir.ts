@@ -1,3 +1,6 @@
 export interface IBaseDir {
-	get basedir():string
+	get workSpaceBaseDir():string
 }
+
+
+

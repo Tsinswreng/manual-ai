@@ -62,6 +62,22 @@ Remove all comments from your final output
 
 YAML Multi-line Block Scalar Syntax Rules:
 
+```yaml
+multiLine: |+ # in the content each line should indented one more layer
+  123
+  abc
+foo: bar
+```
+this is equivalent to 
+```json
+{
+// if you use |+, there must be at least one \n at the end
+// you can see no additional indent before 123 and abc
+  "multiLine": "123\nabc\n",
+  "foo": "bar"
+}
+```
+
 the following is **illegal**
 ```yaml
 multiLine: |+
@@ -74,9 +90,12 @@ multiLine: ""
 foo: bar
 ```
 
+
 Ensure proper indentation (2 spaces)
 
 Key Replacement Rule
+
+your code style should be consistent with the rest of the codebase, including indentation, naming conventions etc.
 
 When performing file content replacement operations (replaceByLine, replaceBySnippet), full file replacement is only allowed in scenarios that require large-scale modifications to the entire file. **In all other cases, perform precise replacement only for the key parts that need adjustment, and keep the original content of the non-modified parts completely unchanged without any unnecessary changes.**
 
@@ -116,7 +135,47 @@ Error example:
         using System.Linq;
 ```
 
-your code style should be consistent with the rest of the codebase, including indentation, naming conventions etc.
+your indent should be consistent with the rest of the codebase
+e.g
+
+the code that user provided is
+```cs
+File: e:/Program.cs
+1|if(true){
+2|	for(var i = 0; i < list.Count; i++){
+3|
+4|	}
+}
+```
+and the user asks you to replace the `for` loop with `foreach` loop.
+
+you should provide the following YAML output:
+
+correct example:
+```yaml
+operations:
+  - type: replaceByLine
+    path: e:/Program.cs
+    replace:
+      - startLine: 2
+        endLine: 2
+        data: |+
+          	foreach(var i in list){
+```
+in this way, after deserialize, `data` would be "\tforeach(var i in list){"
+
+incorrect example:
+
+```yaml
+#...
+data: |+
+  foreach(var i in list){
+```
+
+in this way, after deserialize, `data` would be "foreach(var i in list){" without any indentation.
+
+
+
 
 Output only the raw YAML without markdown formatting, without comments, and without any explanatory text outside the YAML structure.
 

@@ -5,6 +5,6 @@ export interface ILineNumAttacher {
 export class LineNumAttacher implements ILineNumAttacher {
 	static inst = new this();
 	attachLineNum(line: string, lineNum: number): string {
-		return lineNum+"| " + line;
+		return lineNum+"|" + line;
 	}
 }

@@ -10,12 +10,24 @@ export interface I_type{
 	type:EOperateType
 }
 
+/**
+ * 操作基礎接口
+ */
 export interface IOperation extends I_type{
 
 }
 
+/**
+ * 涉及寫的操作都要實現此接口
+ */
+export interface IOpWriteFile extends IOperation{
+	path: string
+}
+
+
 /** 講解。給人看 不與編輯器交互 */
 export interface IOpExplain extends IOperation{
+	/** 用yaml多行文本塊語法 */
 	text: string
 }
 
@@ -24,7 +36,10 @@ export interface IOpExplain extends IOperation{
  * 適用于 AI初次答旹。若用戶同意AI之改、則行號既變、後續追問旹則不可復依行號替換，需用文本片段匹配
  * 文件芝發予AI者皆帶行號、AI當不會數錯
  */
-export interface IOpReplaceByLine extends IOperation{
+export interface IOpReplaceByLine extends 
+	IOperation
+	,IOpWriteFile
+{
 	/** 文件不存在時 自動創建
 	 * 如需新建並寫入文件、則把path設爲新路徑、把始行與末行皆設爲0、data設爲要寫入的內容
 	 */
@@ -40,7 +55,10 @@ export interface IOpReplaceByLine extends IOperation{
  * 按文本片段匹配替換
  * 
  */
-export interface IOpReplaceBySnippet extends IOperation{
+export interface IOpReplaceBySnippet extends 
+	IOperation
+	,IOpWriteFile
+{
 	path: string
 	/**
 	 * 爲防止錯配(即一個文件中匹配到多個相同的文本片段)、match應足夠長
@@ -68,7 +86,11 @@ export interface IOpReadFiles extends IOperation{
 
 
 /** AI 格式化輸出 */
-export interface IOperations{
+export interface IAiResp{
+	/** 對應請求的Unix時間戳。
+	 * 因 是網頁AI、使AI答今之時間則不善
+	 */
+	reqUnixMs?:number
 	operations: IOperation[]
 }
 

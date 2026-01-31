@@ -44,6 +44,7 @@ export interface IFileCtx{
 
 /** 最終給AI發送的內容 */
 export interface IFinalReq{
+	unixMs: number;
 	files: IFileCtx[];
 	/** 用yaml多行文本塊語法、勿轉義 */
 	text: string;

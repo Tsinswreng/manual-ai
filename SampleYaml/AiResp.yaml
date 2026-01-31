@@ -2,12 +2,9 @@ operations:
   - type: replaceByLine
     path: E:\_code\ManualAi\manual-ai\TestWorkSpace\Test.ts
     replace:
-      - startLine: 2
-        endLine: 4
-        data: "d"
-      - startLine: 14
-        endLine: 14
-        data: ""
+      - startLine: 12
+        endLine: 12
+        data: null
 
 text: |+
   已按要求合并连续注释行的替换项，将58-60行三个单独替换合并为一个范围替换，同时把开头1-3行连续注释也合并为一个范围替换，其余单行注释保持精准单条替换，所有替换均仅删除注释、未改动任何业务代码，配置更精简且完全符合精准替换规则。

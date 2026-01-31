@@ -35,24 +35,29 @@ export class ChangeApplyer implements IChangeApplyer {
 		const sortedReplace = [...change.replace].sort((a, b) => b.startLine - a.startLine);
 
 		// 执行替换
-		
+
 		for (const replace of sortedReplace) {
-			const replaceData = replace.data??""//當replace.data不爲undefined時、必以\n結尾
+			const replaceData = replace.data//當replace.data不爲undefined時、必以\n結尾;
 			if (replace.startLine === 0 && replace.endLine === 0) {
 				// 新建文件
-				lines = replaceData.split('\n');
+				lines = (replaceData ?? "").split('\n');
 			} else {
 				// 注意：用户指定的行号从1开始，而数组索引从0开始
 				const start = replace.startLine - 1;
 				const end = replace.endLine; // 数组的splice方法是从start开始删除end-start个元素
-				
-				// 替换指定范围的行
-				const newLines = replaceData.split('\n');
-				// 移除split后末尾的空元素（因原数据末尾带\n导致），同时兼容空数据场景
-				if (newLines.length > 1 && newLines[newLines.length - 1] === '') {
-					newLines.pop();
+
+				if (replaceData == void 0) {
+					// data为undefined时，删除指定行范围
+					lines.splice(start, end - start);
+				} else {
+					// 替换指定范围的行（含空字符串替换场景）
+					const newLines = replaceData.split('\n');
+					// 移除split后末尾的空元素（因原数据末尾带\n导致），同时兼容空数据场景
+					if (newLines.length > 1 && newLines[newLines.length - 1] === '') {
+						newLines.pop();
+					}
+					lines.splice(start, end - start, ...newLines);
 				}
-				lines.splice(start, end - start, ...newLines);
 			}
 		}
 
@@ -87,7 +92,7 @@ export class ChangeApplyer implements IChangeApplyer {
 		// 执行片段替换
 		for (const replace of change.replace) {
 			// 使用全局替换可能会有风险，所以只替换第一个匹配的片段
-			newContent = newContent.replace(replace.match??"", replace.replacement??"");
+			newContent = newContent.replace(replace.match ?? "", replace.replacement ?? "");
 		}
 
 		// 写入文件

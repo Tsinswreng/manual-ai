@@ -2,88 +2,55 @@
 vsce package
 */
 
-/* removed from package.json:
-	,"keybindings": [
-		{
-			"command": "manual-ai.PasteAndSelect",
-			"key": "ctrl+v",
-			"mac": "cmd+v",
-			"when": "editorTextFocus"
-		}
-	]
-*/
-
 import * as vscode from 'vscode';
+import { promises as fs } from 'fs';
+import { AiResp } from './Model/Impl/AiResp';
+import { ChangeApplyer } from './ChangeApplyer';
+import { IOpWriteFile } from './Model/AiResp';
 
 export function activate(context: vscode.ExtensionContext) {
-	let disposable = vscode.commands.registerCommand('manual-ai.PasteAndSelect', async () => {
-		const editor = vscode.window.activeTextEditor;
-		if (!editor) { return; }
+	let disposable = vscode.commands.registerCommand('manual-ai.ApplyChangesFromYaml', async () => {
+		// 让用户输入 YAML 文件路径
+		const filePath = await vscode.window.showInputBox({
+			placeHolder: '请输入 YAML 文件路径',
+			prompt: '输入要应用的 YAML 文件路径'
+		});
 
-		// 获取粘贴前的内容和位置
-		const originalDoc = editor.document.getText();
-		const originalSelections = editor.selections;
-		const originalCursor = editor.selection.active;
+		if (!filePath) {
+			vscode.window.showErrorMessage('未提供文件路径');
+			return;
+		}
 
-		// 执行默认粘贴操作
-		await vscode.commands.executeCommand('editor.action.clipboardPasteAction');
+		try {
+			// 读取 YAML 文件内容
+			const yamlContent = await fs.readFile(filePath, 'utf8');
+			
+			// 反序列化为 AiResp 对象
+			const aiResp = new AiResp();
+			aiResp.fromYaml(yamlContent);
 
-		// 获取粘贴后的内容
-		const newDoc = editor.document.getText();
-		
-		// 计算差异
-		const diff = findDiff(originalDoc, newDoc, originalCursor);
-		if (!diff) { return; }
+			// 应用更改
+			const changeApplyer = new ChangeApplyer();
+			
+			// 获取当前编辑器的取消令牌
+			const ct = new vscode.CancellationTokenSource().token;
 
-		// 创建新选择范围
-		const newSelection = new vscode.Selection(diff.start, diff.end);
-		editor.selections = [newSelection];
+			// 只处理写操作
+			const writeOperations = aiResp.operations.filter(op => op.type === 'replaceByLine' || op.type === 'replaceBySnippet') as IOpWriteFile[];
+
+			// 执行所有写操作
+			for (const operation of writeOperations) {
+				await changeApplyer.applyChange(operation, ct);
+			}
+
+			// 显示成功信息
+			vscode.window.showInformationMessage(`成功应用了 ${writeOperations.length} 个更改`);
+		} catch (error) {
+			vscode.window.showErrorMessage(`应用更改失败: ${(error as Error).message}`);
+		}
 	});
 
 	context.subscriptions.push(disposable);
-}
-
-interface TextDiff {
-	start: vscode.Position;
-	end: vscode.Position;
-}
-
-function findDiff(original: string, updated: string, cursor: vscode.Position): TextDiff | null {
-	let i = 0;
-	while (i < original.length && i < updated.length && original[i] === updated[i]) {
-		i++;
-	}
-
-	let j = 0;
-	while (
-		j < original.length - i &&
-		j < updated.length - i &&
-		original[original.length - 1 - j] === updated[updated.length - 1 - j]
-	) {
-		j++;
-	}
-
-	const startOffset = i;
-	const endOffset = updated.length - j;
-	
-	const startPos = offsetToPosition(updated, startOffset);
-	const endPos = offsetToPosition(updated, endOffset);
-
-	return { start: startPos, end: endPos };
-}
-
-function offsetToPosition(text: string, offset: number): vscode.Position {
-	let line = 0;
-	let char = 0;
-	for (let i = 0; i < offset && i < text.length; i++) {
-		if (text[i] === '\n') {
-			line++;
-			char = 0;
-		} else {
-			char++;
-		}
-	}
-	return new vscode.Position(line, char);
 }
 
 export function deactivate() {}

@@ -1,6 +1,7 @@
-export interface IBaseDir {
-	get workSpaceBaseDir():string
+export interface IBaseInteractDir {
+	get baseInteractDir():string
 }
+
 
 
 

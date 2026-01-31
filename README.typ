@@ -35,7 +35,9 @@
 我想在我的插件中也用上diff功能。vscode是內置了 本地兩個文件的diff視圖的。我可以在插件上調用。
 
 用來交互的文件結構:
-	根文件夾 可讓用戶在settings.json中配置。默認在 工作區根目錄的 .ManualAi/下
+	根文件夾 可讓用戶在settings.json中配置。默認在 工作區根目錄的 .ManualAi/ 下
+	2026_0131_203330更正: 一個vscode實例可以有多個工作區、應作全局只存一份 .ManualAi/、如在/home裏
+	則格結構的path皆當爲絕對路徑
 ```
 .ManualAi/
 	Io/

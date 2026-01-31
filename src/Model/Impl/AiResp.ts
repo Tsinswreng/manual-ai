@@ -6,7 +6,6 @@ import {
 	IOpReplaceBySnippet,
 	IOpSeekDef,
 	IOpReadFiles,
-	IOpExplain,
 	ILineRangeReplace,
 	ISnippetReplace,
 	ILineEtSymbol,
@@ -158,13 +157,7 @@ export class OpReadFiles extends Operation implements IOpReadFiles {
 	}
 }
 
-// 解释操作实现
-export class OpExplain extends Operation implements IOpExplain {
-	constructor(type?: EOperateType, path?: string) {
-		super(type, path);
-		if (arguments.length === 0) { return; }
-	}
-}
+
 
 // AI响应实现
 export class AiResp extends BaseYaml implements IAiResp {

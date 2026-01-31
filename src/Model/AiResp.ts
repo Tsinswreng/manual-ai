@@ -32,9 +32,9 @@ export interface IOpWriteFile extends IOperation{
 }
 
 export interface ILineRangeReplace{
-	/** 從1始, 含 */
+	/** 從1始, 含。可大於文件總行數。 */
 	startLine: number
-	/** 含 */
+	/** 含。可大於文件總行數。 */
 	endLine: number
 	/** 序列化爲yaml時 要用多行文本塊語法 */
 	data: string
@@ -103,10 +103,6 @@ export interface IOpReadFiles extends IOperation{
 	paths: string[]
 }
 
-
-export interface IOpExplain extends IOperation{
-	
-}
 
 /** AI 格式化輸出 */
 export interface IAiResp extends IFromEtToYaml{

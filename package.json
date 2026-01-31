@@ -14,13 +14,15 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "manual-ai.PasteAndSelect",
-        "title": "paste and select the text that was just pasted"
+        "command": "manual-ai.ApplyChangesFromYaml",
+        "title": "Apply changes from YAML file"
       }
     ]
   },

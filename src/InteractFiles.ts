@@ -1,4 +1,5 @@
 import Path from "path";
+import { BaseInteractDir } from "./BaseDir";
 export interface IInteractFiles {
 	get UserInput():string;
 	get FinalReq():string;
@@ -14,7 +15,11 @@ export interface I_getInteractFiles{
 export class InteractFilesGetter implements I_getInteractFiles{
 	static inst = new InteractFilesGetter()
 	_interactFiles:IInteractFiles = (void 0)!
-	init(base:string){
+	constructor(){
+		const z = this
+		z.init()
+	}
+	init(base:string=BaseInteractDir.inst.baseInteractDir){
 		const z = this
 		z._interactFiles = mkIInteractFiles(base);
 	}

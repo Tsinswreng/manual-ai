@@ -2,6 +2,7 @@ import { IPathNormalizer } from "./IPathNormalizer";
 
 
 export class UnixPathNormalizer implements IPathNormalizer{
+	static inst = new this();
 	/**
 	 * 在原路徑的基礎上
 	 * 所有斜槓都用正斜槓

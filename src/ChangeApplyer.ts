@@ -48,6 +48,10 @@ export class ChangeApplyer implements IChangeApplyer {
 				
 				// 替换指定范围的行
 				const newLines = replaceData.split('\n');
+				// 移除split后末尾的空元素（因原数据末尾带\n导致），同时兼容空数据场景
+				if (newLines.length > 1 && newLines[newLines.length - 1] === '') {
+					newLines.pop();
+				}
 				lines.splice(start, end - start, ...newLines);
 			}
 		}

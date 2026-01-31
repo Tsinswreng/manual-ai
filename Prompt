@@ -12,7 +12,7 @@ operations:
   # 
   - type: replaceByLine
     # if path does not exist, it will be created.
-    path: src/components/Button.tsx
+    path: e:/code/src/components/Button.tsx
     replace:
       - startLine: 15       # starts from 1, included, can be larger than file length
         endLine: 23         # included, can be larger than file length
@@ -27,7 +27,7 @@ operations:
           import { useState } from 'react';
   # Snippet-based replacement (for follow-ups after line numbers changed)
   - type: replaceBySnippet
-    path: src/components/Button.tsx
+    path: e:/code/src/components/Button.tsx
     replace:
       - match: |+ # Must match exactly, including indentation, whitespace, etc.
           function oldHandler() {
@@ -40,12 +40,12 @@ operations:
   # Type 3: Request more files
   - type: readFiles
     paths:
-      - src/types.ts
-      - src/constants.ts
+      - e:/code/src/components/Button.tsx
+      - e:/code/src/components/Button.tsx
 
   # Type 4: Lookup symbol definitions
   - type: seekDef
-    path: src/main.ts
+    path: e:/code/src/components/Button.tsx
     symbols:
       - line: 10
         symbol: UserInterface
@@ -56,27 +56,65 @@ text: |+
   I've made the requested changes to Button.tsx. The first replacement updates the click handler to use proper state management, and the second fixes the return value. I also need to examine the type definitions to ensure compatibility.
 ```
 
-
-
-
-e.g
-```yaml
-data: |+ # non empty string
-  foo
-  bar
-```
-
-```yaml
-data: null # use null forempty string
-```
+All path must be absolute and use forward slashes (/) as the path separator.
 
 Remove all comments from your final output
+
+YAML Multi-line Block Scalar Syntax Rules:
+
+the following is **illegal**
+```yaml
+multiLine: |+
+foo: bar
+```
+because multi-line block must have at least one line of content.
+if you want to represent an empty string, use 
+```yaml
+multiLine: ""
+foo: bar
+```
 
 Ensure proper indentation (2 spaces)
 
 Key Replacement Rule
 
-When performing file content replacement operations (replaceByLine, replaceBySnippet), full file replacement is only allowed in scenarios that require large-scale modifications to the entire file. In all other cases, perform precise replacement only for the key parts that need adjustment, and keep the original content of the non-modified parts completely unchanged without any unnecessary changes.
+When performing file content replacement operations (replaceByLine, replaceBySnippet), full file replacement is only allowed in scenarios that require large-scale modifications to the entire file. **In all other cases, perform precise replacement only for the key parts that need adjustment, and keep the original content of the non-modified parts completely unchanged without any unnecessary changes.**
+
+when use `replaceByLine`, for consecutive lines, you must set `startLine` and `endLine` to the corressponding range.
+
+e.g
+```yaml
+- type: replaceByLine
+  path: e:/code/src/components/Button.tsx
+  replace:
+    - startLine: 1
+      endLine: 3
+      data: |+
+        using System;
+        using System.Collections.Generic;
+        using System.Linq;
+```
+
+Error example:
+```yaml
+- type: replaceByLine
+  path: e:/code/src/components/Button.tsx
+  replace:
+    - startLine: 1
+      endLine: 1
+      data: |+
+        using System;
+      #
+    - startLine: 2
+      endLine: 2
+      data: |+
+        using System.Collections.Generic;
+      #
+    - startLine: 3
+      endLine: 3
+      data: |+
+        using System.Linq;
+```
 
 your code style should be consistent with the rest of the codebase, including indentation, naming conventions etc.
 

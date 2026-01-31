@@ -6,6 +6,10 @@ export type EOperateType =
 |'readFiles'//讀多個文件
 |'seekDef'//查找符號定義
 
+export interface I_path{
+	path:string
+}
+
 export interface I_type{
 	type:EOperateType
 }
@@ -13,7 +17,7 @@ export interface I_type{
 /**
  * 操作基礎接口
  */
-export interface IOperation extends I_type{
+export interface IOperation extends I_type, I_path{
 
 }
 
@@ -21,7 +25,7 @@ export interface IOperation extends I_type{
  * 涉及寫的操作都要實現此接口
  */
 export interface IOpWriteFile extends IOperation{
-	path: string
+	
 }
 
 
@@ -29,6 +33,15 @@ export interface IOpWriteFile extends IOperation{
 export interface IOpExplain extends IOperation{
 	/** 用yaml多行文本塊語法 */
 	text: string
+}
+
+export interface ILineRangeReplace{
+	/** 從1始, 含 */
+	startLine: number
+	/** 含 */
+	endLine: number
+	/** 序列化爲yaml時 要用多行文本塊語法 */
+	data: string
 }
 
 /** 依行號替換文件 
@@ -44,12 +57,22 @@ export interface IOpReplaceByLine extends
 	 * 如需新建並寫入文件、則把path設爲新路徑、把始行與末行皆設爲0、data設爲要寫入的內容
 	 */
 	path: string
-	/** 從1始 */
-	startLine: number
-	endLine: number
-	data: string
+	/**
+	 * 要對行號排序、倒序執行
+	 */
+	replace: ILineRangeReplace[]
 }
 
+export interface ISnippetReplace{
+	/**
+	 * 爲防止錯配(即一個文件中匹配到多個相同的文本片段)、match應足夠長
+	 * match應與原文出現的代碼片段嚴格相同、包括縮進, 首尾空白, 其他地方的空白符號等。
+	 * 用戶的提問會經過正規化，其中的換行符統一用\n
+	 */
+	match: string
+	replacement: string
+
+}
 
 /**
  * 按文本片段匹配替換
@@ -59,22 +82,18 @@ export interface IOpReplaceBySnippet extends
 	IOperation
 	,IOpWriteFile
 {
-	path: string
-	/**
-	 * 爲防止錯配(即一個文件中匹配到多個相同的文本片段)、match應足夠長
-	 * match應與原文出現的代碼片段嚴格相同、包括縮進, 首尾空白, 其他地方的空白符號等。
-	 * 用戶的提問會經過正規化，其中的換行符統一用\n
-	 */
-	match: string
-	replacement: string
+	replace: ISnippetReplace[]
+}
+
+export interface ILineEtSymbol{
+	line: number
+	//col?: number //本欲用于精細定位與消岐、但所予AI之文件內容只有行號而無列號、今則暫定不設
+	symbol: string
 }
 
 /** 查找符號定義 */
-export interface IOpSeekDef extends IOperation{
-	path: string
-	line: number
-	//col?: number //本欲用于精細定位與消岐、今則暫定不設
-	symbol: string
+export interface IOpSeekDef extends IOperation, I_path{
+	symbols: ILineEtSymbol[]
 }
 
 /** AI再請求讀多個文件

@@ -1,6 +1,8 @@
+import { IFromEtToYaml } from "./IFromEtToYaml"
+
 /** AI回答 之 操作類型 */
 export type EOperateType =
-|'explain'//講解。給人看 不與編輯器交互
+//|'explain'//講解。給人看 不與編輯器交互
 |'replaceByLine'//按行號替換
 |'replaceBySnippet'//按文本替換
 |'readFiles'//讀多個文件
@@ -17,7 +19,7 @@ export interface I_type{
 /**
  * 操作基礎接口
  */
-export interface IOperation extends I_type, I_path{
+export interface IOperation extends I_type, I_path, IFromEtToYaml{
 
 }
 
@@ -26,13 +28,6 @@ export interface IOperation extends I_type, I_path{
  */
 export interface IOpWriteFile extends IOperation{
 	
-}
-
-
-/** 講解。給人看 不與編輯器交互 */
-export interface IOpExplain extends IOperation{
-	/** 用yaml多行文本塊語法 */
-	text: string
 }
 
 export interface ILineRangeReplace{
@@ -63,13 +58,17 @@ export interface IOpReplaceByLine extends
 	replace: ILineRangeReplace[]
 }
 
-export interface ISnippetReplace{
+export interface ISnippetReplace extends IFromEtToYaml{
 	/**
 	 * 爲防止錯配(即一個文件中匹配到多個相同的文本片段)、match應足夠長
 	 * match應與原文出現的代碼片段嚴格相同、包括縮進, 首尾空白, 其他地方的空白符號等。
 	 * 用戶的提問會經過正規化，其中的換行符統一用\n
+	 * 用yaml多行文本塊語法
 	 */
 	match: string
+	/**
+	 * 用yaml多行文本塊語法
+	 */
 	replacement: string
 
 }
@@ -104,13 +103,20 @@ export interface IOpReadFiles extends IOperation{
 }
 
 
+export interface IOpExplain extends IOperation{
+	
+}
+
 /** AI 格式化輸出 */
-export interface IAiResp{
+export interface IAiResp extends IFromEtToYaml{
 	/** 對應請求的Unix時間戳。
 	 * 因 是網頁AI、使AI答今之時間則不善
 	 */
 	reqUnixMs?:number
 	operations: IOperation[]
+	/** 講解。給人看 不與編輯器交互
+	 * 用yaml多行文本塊語法 */
+	text: string
 }
 
 

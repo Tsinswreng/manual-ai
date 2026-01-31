@@ -1,6 +1,7 @@
+import { IFromEtToYaml } from "./IFromEtToYaml"
 
 
-export interface IChangedFileMap{
+export interface IChangedFileMap extends IFromEtToYaml{
 	unixMs:number
 	/**
 	 * AI改過之後之 完整的 新文件
@@ -16,6 +17,6 @@ export interface IChangedFileMap{
 
 
 
-export interface IChanges{
+export interface IChanges extends IFromEtToYaml{
 	changes: IChangedFileMap[]
 }

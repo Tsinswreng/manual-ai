@@ -1,5 +1,7 @@
+import { IFromEtToYaml } from "./IFromEtToYaml";
+
 /** 單個文件上下文 */
-export interface IFileCtx{
+export interface IFileCtx extends IFromEtToYaml{
 	path: string;
 	/** vscode提供 的 編譯錯誤信息
 	 * 如
@@ -43,7 +45,7 @@ export interface IFileCtx{
 }
 
 /** 最終給AI發送的內容 */
-export interface IFinalReq{
+export interface IFinalReq extends IFromEtToYaml{
 	unixMs: number;
 	files: IFileCtx[];
 	/** 用yaml多行文本塊語法、勿轉義 */

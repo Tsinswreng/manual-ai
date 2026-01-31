@@ -1,3 +1,5 @@
+import { IFromEtToYaml } from "./IFromEtToYaml"
+
 export interface IRegexs{
 	/** 包含的文件 如 [".*svc.*ts$"] */
 	includes:string[]
@@ -16,7 +18,7 @@ export interface IFiles{
  * 由人類手寫的提問內容
  * 被處理成 @see IFinalReq 後 纔發送給AI
  */
-export interface IRawReq{
+export interface IRawReq extends IFromEtToYaml{
 	files: IFiles
 	text: string
 }

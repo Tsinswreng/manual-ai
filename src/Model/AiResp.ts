@@ -8,6 +8,7 @@ export type EOperateType =
 |'readFiles'//讀多個文件
 |'seekDef'//查找符號定義
 
+
 export interface I_path{
 	path:string
 }

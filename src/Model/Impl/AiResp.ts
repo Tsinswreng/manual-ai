@@ -11,7 +11,8 @@ import {
 	ILineEtSymbol,
 	EOperateType
 } from "../AiResp";
-import { parse, Document, Scalar } from 'yaml';
+import { parse, Document } from 'yaml';
+import { yamlMultiLine } from "./yamlMultiLine";
 
 // 基础实现类，提供通用的 toYaml 和 fromYaml 方法
 abstract class BaseYaml implements IFromEtToYaml {
@@ -49,9 +50,7 @@ export class LineRangeReplace extends BaseYaml implements ILineRangeReplace {
 		doc.set('endLine', target.endLine);
 
 		// 强制 data 字段使用多行文本块语法
-		const dataScalar = new Scalar(target.data);
-		dataScalar.type = 'BLOCK_LITERAL';
-		doc.set('data', dataScalar);
+		doc.set('data', yamlMultiLine(target.data));
 
 		return String(doc);
 	}
@@ -74,14 +73,10 @@ export class SnippetReplace extends BaseYaml implements ISnippetReplace {
 		const doc = new Document();
 
 		// 强制 match 字段使用多行文本块语法
-		const matchScalar = new Scalar(target.match);
-		matchScalar.type = 'BLOCK_LITERAL';
-		doc.set('match', matchScalar);
+		doc.set('match', yamlMultiLine(target.match));
 
 		// 强制 replacement 字段使用多行文本块语法
-		const replacementScalar = new Scalar(target.replacement);
-		replacementScalar.type = 'BLOCK_LITERAL';
-		doc.set('replacement', replacementScalar);
+		doc.set('replacement', yamlMultiLine(target.replacement));
 
 		return String(doc);
 	}
@@ -182,9 +177,7 @@ export class AiResp extends BaseYaml implements IAiResp {
 		doc.set('operations', target.operations);
 
 		// 强制 text 字段使用多行文本块语法
-		const textScalar = new Scalar(target.text);
-		textScalar.type = 'BLOCK_LITERAL';
-		doc.set('text', textScalar);
+		doc.set('text', yamlMultiLine(target.text));
 
 		return String(doc);
 	}

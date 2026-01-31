@@ -1,6 +1,7 @@
 import { IFromEtToYaml } from "../IFromEtToYaml";
 import { IFinalReq, IFileCtx } from "../FinalReq";
-import { parse, Document, Scalar } from 'yaml';
+import { parse, Document } from 'yaml';
+import { yamlMultiLine } from "./yamlMultiLine";
 
 // 基础实现类，提供通用的 toYaml 和 fromYaml 方法
 abstract class BaseYaml implements IFromEtToYaml {
@@ -37,17 +38,11 @@ export class FileCtx extends BaseYaml implements IFileCtx {
 		doc.set('path', target.path);
 
 		// 强制 issues 字段使用多行文本块语法
-		const issues = target.issues.map((issue: string) => {
-			const scalar = new Scalar(issue);
-			scalar.type = 'BLOCK_LITERAL';
-			return scalar;
-		});
+		const issues = target.issues.map((issue: string) => yamlMultiLine(issue));
 		doc.set('issues', issues);
 
 		// 强制 contentWithLineNum 字段使用多行文本块语法
-		const contentScalar = new Scalar(target.contentWithLineNum);
-		contentScalar.type = 'BLOCK_LITERAL';
-		doc.set('contentWithLineNum', contentScalar);
+		doc.set('contentWithLineNum', yamlMultiLine(target.contentWithLineNum));
 
 		return String(doc);
 	}
@@ -74,9 +69,7 @@ export class FinalReq extends BaseYaml implements IFinalReq {
 		doc.set('files', target.files);
 
 		// 强制 text 字段使用多行文本块语法
-		const textScalar = new Scalar(target.text);
-		textScalar.type = 'BLOCK_LITERAL';
-		doc.set('text', textScalar);
+		doc.set('text', yamlMultiLine(target.text));
 
 		return String(doc);
 	}

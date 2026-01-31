@@ -1,0 +1,51 @@
+operations:
+  - type: replaceByLine
+    path: E:\_code\ManualAi\manual-ai\TestWorkSpace\Test.ts
+    replace:
+      - startLine: 2
+        endLine: 2
+        data: |-
+      - startLine: 3
+        endLine: 3
+        data: |-
+      - startLine: 4
+        endLine: 4
+        data: |-
+      - startLine: 14
+        endLine: 14
+        data: |-
+      - startLine: 26
+        endLine: 26
+        data: |-
+      - startLine: 29
+        endLine: 29
+        data: |-
+      - startLine: 33
+        endLine: 33
+        data: |-
+      - startLine: 36
+        endLine: 36
+        data: |-
+      - startLine: 39
+        endLine: 39
+        data: |-
+      - startLine: 42
+        endLine: 42
+        data: |-
+      - startLine: 47
+        endLine: 47
+        data: |-
+      - startLine: 58
+        endLine: 58
+        data: |-
+      - startLine: 59
+        endLine: 59
+        data: |-
+      - startLine: 60
+        endLine: 60
+        data: |-
+      - startLine: 61
+        endLine: 61
+        data: |-
+text: |-
+  已成功移除Test.ts文件中的所有注释，包括文件开头、代码中间和文件结尾的所有//格式注释，保留了原文件的代码结构、空行和所有业务逻辑，代码功能不受任何影响。

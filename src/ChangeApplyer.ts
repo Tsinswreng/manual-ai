@@ -35,17 +35,19 @@ export class ChangeApplyer implements IChangeApplyer {
 		const sortedReplace = [...change.replace].sort((a, b) => b.startLine - a.startLine);
 
 		// 执行替换
+		
 		for (const replace of sortedReplace) {
+			const replaceData = replace.data??""//當replace.data不爲undefined時、必以\n結尾
 			if (replace.startLine === 0 && replace.endLine === 0) {
 				// 新建文件
-				lines = replace.data.split('\n');
+				lines = replaceData.split('\n');
 			} else {
 				// 注意：用户指定的行号从1开始，而数组索引从0开始
 				const start = replace.startLine - 1;
 				const end = replace.endLine; // 数组的splice方法是从start开始删除end-start个元素
 				
 				// 替换指定范围的行
-				const newLines = replace.data.split('\n');
+				const newLines = replaceData.split('\n');
 				lines.splice(start, end - start, ...newLines);
 			}
 		}
@@ -81,7 +83,7 @@ export class ChangeApplyer implements IChangeApplyer {
 		// 执行片段替换
 		for (const replace of change.replace) {
 			// 使用全局替换可能会有风险，所以只替换第一个匹配的片段
-			newContent = newContent.replace(replace.match, replace.replacement);
+			newContent = newContent.replace(replace.match??"", replace.replacement??"");
 		}
 
 		// 写入文件

@@ -36,10 +36,10 @@ export interface ILineRangeReplace{
 	startLine: number
 	/** 含。可大於文件總行數。 */
 	endLine: number
-	/** 序列化爲yaml時 要用多行文本塊語法 
-	 * 注意: yaml中應當用 xxx: |- 而不是 xxx: | 因為後者會在末尾多加一個換行符
+	/** 
+	 * 用yaml可空多行文本塊規則
 	 */
-	data: string
+	data: string|undefined
 }
 
 /** 依行號替換文件 
@@ -66,15 +66,13 @@ export interface ISnippetReplace extends IFromEtToYaml{
 	 * 爲防止錯配(即一個文件中匹配到多個相同的文本片段)、match應足夠長
 	 * match應與原文出現的代碼片段嚴格相同、包括縮進, 首尾空白, 其他地方的空白符號等。
 	 * 用戶的提問會經過正規化，其中的換行符統一用\n
-	 * 用yaml多行文本塊語法
-	 * 注意: yaml中應當用 xxx: |- 而不是 xxx: | 因為後者會在末尾多加一個換行符
+	 * 用yaml多行文本塊規則
 	 */
-	match: string
+	match: string|undefined
 	/**
-	 * 用yaml多行文本塊語法
-	 * 注意: yaml中應當用 xxx: |- 而不是 xxx: | 因為後者會在末尾多加一個換行符
+	 * 用yaml可空多行文本塊規則
 	 */
-	replacement: string
+	replacement: string|undefined
 
 }
 
@@ -116,8 +114,8 @@ export interface IAiResp extends IFromEtToYaml{
 	reqUnixMs?:number
 	operations: IOperation[]
 	/** 講解。給人看 不與編輯器交互
-	 * 用yaml多行文本塊語法 */
-	text: string
+	 * 用yaml可空多行文本塊規則 */
+	text?: string
 }
 
 

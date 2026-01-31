@@ -19,6 +19,7 @@ export interface IFiles{
  * 被處理成 @see IFinalReq 後 纔發送給AI
  */
 export interface IRawReq extends IFromEtToYaml{
-	files: IFiles
-	text: string
+	files?: IFiles
+	/** 用yaml多行文本塊規則 */
+	text?: string
 }

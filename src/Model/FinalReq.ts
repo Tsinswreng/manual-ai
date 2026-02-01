@@ -1,5 +1,6 @@
 import { NullableList } from "../NullableList";
 import { IFromEtToYaml } from "./IFromEtToYaml";
+import { IYamlBlock } from "./IYamlBlock";
 
 /** 單個文件上下文 */
 export interface IFileCtx extends IFromEtToYaml{
@@ -28,7 +29,7 @@ export interface IFileCtx extends IFromEtToYaml{
 	 * 多個yaml多行文本塊(列表) 勿轉義。 因是給AI看的 故不需保持結構化
 	 * 
 	 */
-	issues?: NullableList<string>;
+	issues?: string[];
 	/** 帶有行號的原始內容。行號從1始
 	 * 如
 	 * 1|	#!/bin/bash
@@ -42,13 +43,13 @@ export interface IFileCtx extends IFromEtToYaml{
 	 * 文件換行符會被歸一化 為 \n
 	 * 用yaml多行文本塊規則
 	 */
-	contentWithLineNum?: string;
+	contentWithLineNum?: IYamlBlock;
 }
 
 /** 最終給AI發送的內容 */
 export interface IFinalReq extends IFromEtToYaml{
 	unixMs: number;
-	files?: NullableList<IFileCtx>;
+	files?: IFileCtx[];
 	/** 用yaml多行文本塊規則 */
-	text?: string;
+	text?: IYamlBlock;
 }

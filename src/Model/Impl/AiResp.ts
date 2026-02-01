@@ -1,4 +1,5 @@
 import { IFromEtToYaml } from "../IFromEtToYaml";
+import { IYamlBlock } from "../IYamlBlock";
 import {
 	IAiResp,
 	IOperation,
@@ -33,9 +34,9 @@ return yamlDocToStr(doc);
 export class LineRangeReplace extends BaseYaml implements ILineRangeReplace {
 	startLine: number = (void 0)!;
 	endLine: number = (void 0)!;
-	data: string = (void 0)!;
+	data?: IYamlBlock;
 
-	constructor(startLine?: number, endLine?: number, data?: string) {
+	constructor(startLine?: number, endLine?: number, data?: IYamlBlock) {
 		super();
 		if (arguments.length === 0) { return; }
 		if (startLine !== undefined) this.startLine = startLine;
@@ -50,7 +51,9 @@ export class LineRangeReplace extends BaseYaml implements ILineRangeReplace {
 		doc.set('endLine', target.endLine);
 
 		// 强制 data 字段使用多行文本块语法
-		doc.set('data', yamlMultiLine(target.data));
+		if (target.data?.content) {
+			doc.set('data', yamlMultiLine(target.data.content));
+		}
 
 return yamlDocToStr(doc);
 	}
@@ -58,10 +61,10 @@ return yamlDocToStr(doc);
 
 // 片段替换实现
 export class SnippetReplace extends BaseYaml implements ISnippetReplace {
-	match: string = (void 0)!;
-	replacement: string = (void 0)!;
+	match?: IYamlBlock;
+	replacement?: IYamlBlock;
 
-	constructor(match?: string, replacement?: string) {
+	constructor(match?: IYamlBlock, replacement?: IYamlBlock) {
 		super();
 		if (arguments.length === 0) { return; }
 		if (match !== undefined) this.match = match;
@@ -73,10 +76,14 @@ export class SnippetReplace extends BaseYaml implements ISnippetReplace {
 		const doc = new Document();
 
 		// 强制 match 字段使用多行文本块语法
-		doc.set('match', yamlMultiLine(target.match));
+		if (target.match?.content) {
+			doc.set('match', yamlMultiLine(target.match.content));
+		}
 
 		// 强制 replacement 字段使用多行文本块语法
-		doc.set('replacement', yamlMultiLine(target.replacement));
+		if (target.replacement?.content) {
+			doc.set('replacement', yamlMultiLine(target.replacement.content));
+		}
 
 return yamlDocToStr(doc);
 	}
@@ -158,9 +165,9 @@ export class OpReadFiles extends Operation implements IOpReadFiles {
 export class AiResp extends BaseYaml implements IAiResp {
 	reqUnixMs?: number;
 	operations: IOperation[] = [];
-	text: string = (void 0)!;
+	text?: IYamlBlock;
 
-	constructor(reqUnixMs?: number, operations?: IOperation[], text?: string) {
+	constructor(reqUnixMs?: number, operations?: IOperation[], text?: IYamlBlock) {
 		super();
 		if (arguments.length === 0) { return; }
 		if (reqUnixMs !== undefined) this.reqUnixMs = reqUnixMs;
@@ -177,7 +184,9 @@ export class AiResp extends BaseYaml implements IAiResp {
 		doc.set('operations', target.operations);
 
 		// 强制 text 字段使用多行文本块语法
-		doc.set('text', yamlMultiLine(target.text));
+		if (target.text?.content) {
+			doc.set('text', yamlMultiLine(target.text.content));
+		}
 
 return yamlDocToStr(doc);
 	}

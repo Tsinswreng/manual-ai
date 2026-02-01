@@ -1,7 +1,9 @@
 import { IFromEtToYaml } from "../IFromEtToYaml";
+import { IYamlBlock } from "../IYamlBlock";
 import { IFinalReq, IFileCtx } from "../FinalReq";
 import { parse, Document } from 'yaml';
 import { yamlDocToStr, yamlMultiLine } from "./yamlMultiLine";
+
 
 // 基础实现类，提供通用的 toYaml 和 fromYaml 方法
 abstract class BaseYaml implements IFromEtToYaml {
@@ -22,9 +24,9 @@ return yamlDocToStr(doc);
 export class FileCtx extends BaseYaml implements IFileCtx {
 	path: string = (void 0)!;
 	issues: string[] = [];
-	contentWithLineNum: string = (void 0)!;
+	contentWithLineNum?: IYamlBlock;
 
-	constructor(path?: string, issues?: string[], contentWithLineNum?: string) {
+	constructor(path?: string, issues?: string[], contentWithLineNum?: IYamlBlock) {
 		super();
 		if (arguments.length === 0) { return; }
 		if (path !== undefined) this.path = path;
@@ -42,7 +44,9 @@ export class FileCtx extends BaseYaml implements IFileCtx {
 		doc.set('issues', issues);
 
 		// 强制 contentWithLineNum 字段使用多行文本块语法
-		doc.set('contentWithLineNum', yamlMultiLine(target.contentWithLineNum));
+		if (target.contentWithLineNum?.content) {
+			doc.set('contentWithLineNum', yamlMultiLine(target.contentWithLineNum.content));
+		}
 
 return yamlDocToStr(doc);
 	}
@@ -52,9 +56,9 @@ return yamlDocToStr(doc);
 export class FinalReq extends BaseYaml implements IFinalReq {
 	unixMs: number = (void 0)!;
 	files: IFileCtx[] = [];
-	text: string = (void 0)!;
+	text?: IYamlBlock;
 
-	constructor(unixMs?: number, files?: IFileCtx[], text?: string) {
+	constructor(unixMs?: number, files?: IFileCtx[], text?: IYamlBlock) {
 		super();
 		if (arguments.length === 0) { return; }
 		if (unixMs !== undefined) this.unixMs = unixMs;
@@ -69,7 +73,9 @@ export class FinalReq extends BaseYaml implements IFinalReq {
 		doc.set('files', target.files);
 
 		// 强制 text 字段使用多行文本块语法
-		doc.set('text', yamlMultiLine(target.text));
+		if (target.text?.content) {
+			doc.set('text', yamlMultiLine(target.text.content));
+		}
 		return yamlDocToStr(doc);
 	}
 }

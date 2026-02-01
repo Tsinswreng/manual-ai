@@ -1,6 +1,7 @@
 import { IOpWriteFile, IOpReplaceByLine, IOpReplaceBySnippet, EOperateType } from "./Model/AiResp";
 import { readFile, writeFile, ensureDir } from "./Tools/FileUtils";
 import { CT } from "./CT";
+import { YamlBlock } from "./Model/IYamlBlock";
 
 export interface IChangeApplyer {
 	applyChange(change: IOpWriteFile, ct: CT): Promise<any>
@@ -37,7 +38,11 @@ export class ChangeApplyer implements IChangeApplyer {
 		// 执行替换
 
 		for (const replace of sortedReplace) {
-			const replaceData = replace.data//當replace.data不爲undefined時、必以\n結尾;
+			if(replace.data == void 0){
+				continue;
+			}
+			//當replace.data不爲undefined時、必以\n結尾;
+			const replaceData = YamlBlock.getParsedContent(replace.data)
 			if (replace.startLine === 0 && replace.endLine === 0) {
 				// 新建文件
 				lines = (replaceData ?? "").split('\n');
@@ -92,7 +97,15 @@ export class ChangeApplyer implements IChangeApplyer {
 		// 执行片段替换
 		for (const replace of change.replace) {
 			// 使用全局替换可能会有风险，所以只替换第一个匹配的片段
-			newContent = newContent.replace(replace.match ?? "", replace.replacement ?? "");
+			if(replace.match == void 0){
+				continue;
+			}
+			const match = YamlBlock.getParsedContent(replace.match);
+			if(match == void 0){
+				continue
+			}
+			const replacement = replace.replacement == void 0?void 0 : YamlBlock.getParsedContent(replace.replacement);
+			newContent = newContent.replace(match, replacement??'');
 		}
 
 		// 写入文件

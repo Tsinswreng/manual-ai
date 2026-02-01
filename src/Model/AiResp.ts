@@ -1,5 +1,6 @@
 import { NullableList } from "../NullableList"
 import { IFromEtToYaml } from "./IFromEtToYaml"
+import { IYamlBlock } from "./IYamlBlock"
 
 /** AI回答 之 操作類型 */
 export type EOperateType =
@@ -40,7 +41,7 @@ export interface ILineRangeReplace{
 	/** 
 	 * 用yaml可空多行文本塊規則
 	 */
-	data: string|undefined
+	data?: IYamlBlock
 }
 
 /** 依行號替換文件 
@@ -69,11 +70,11 @@ export interface ISnippetReplace extends IFromEtToYaml{
 	 * 用戶的提問會經過正規化，其中的換行符統一用\n
 	 * 用yaml多行文本塊規則
 	 */
-	match: string|undefined
+	match?: IYamlBlock
 	/**
 	 * 用yaml可空多行文本塊規則
 	 */
-	replacement: string|undefined
+	replacement?: IYamlBlock
 
 }
 
@@ -116,7 +117,7 @@ export interface IAiResp extends IFromEtToYaml{
 	operations?: IOperation[]
 	/** 講解。給人看 不與編輯器交互
 	 * 用yaml可空多行文本塊規則 */
-	text?: string
+	text?: IYamlBlock
 }
 
 

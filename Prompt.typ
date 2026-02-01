@@ -17,49 +17,81 @@ operations:
     replace:
       - startLine: 15       # starts from 1, included, can be larger than file length
         endLine: 23         # included, can be larger than file length
-        data: |+
-          const handleClick = () => {
-              console.log("clicked");
-              setState(prev => !prev);
-          };
+        data:
+          baseIndent: "    " # base indent for the content, which means each line would have another "    " at the beginning
+          content: |+
+            const handleClick = () => {
+                console.log("clicked");
+                setState(prev => !prev);
+            };
+          #~content
+        #~data
+      #~-
       - startLine: 45       # Multiple ranges allowed
         endLine: 45         # Single line replacement
-        data: |+
-          import { useState } from 'react';
+        data: 
+          baseIndent: "" # "" means no baseIndent
+          content: |+
+            import { useState } from 'react';
+          #~content
+        #~data
+      #~-
+    #~replace
+  #~-
   # Snippet-based replacement (for follow-ups after line numbers changed)
   - type: replaceBySnippet
     path: e:/code/src/components/Button.tsx
     replace:
-      - match: |+ # Must match exactly, including indentation, whitespace, etc.
-          		function oldHandler() {
-          			return false;
-          		}
-        replacement: |+
-          		function newHandler() {
-          			return true;
-          		}
+      - match: 
+          baseIndent: "" # you can also directly add indent to the content like below, in this way you don't need to specify baseIndent
+          content: |+ # Must match exactly, including indentation, whitespace, etc.
+            		function oldHandler() {
+            			return false;
+            		}
+          #~content
+        #~match
+        replacement: 
+          baseIndent: ""
+          content: |+
+            		function newHandler() {
+            			return true;
+            		}
+          #~content
+        #~replacement
+      #~-
+    #~replace
   # Type 3: Request more files
   - type: readFiles
     paths:
       - e:/code/src/components/Button.tsx
       - e:/code/src/components/Button.tsx
-
+    #~paths
+  #~-
   # Type 4: Lookup symbol definitions
   - type: seekDef
     path: e:/code/src/components/Button.tsx
     symbols:
       - line: 10
         symbol: UserInterface
+      #~-
       - line: 25
         symbol: fetchUserData
+      #~-
+    #~symbols
+  #~-
+#~operations
 # Human-readable explanation for the user
-text: |+
-  I've made the requested changes to Button.tsx. The first replacement updates the click handler to use proper state management, and the second fixes the return value. I also need to examine the type definitions to ensure compatibility.
+text: 
+  baseIndent: ""
+  content: |+
+    I've made the requested changes to Button.tsx. The first replacement updates the click handler to use proper state management, and the second fixes the return value. I also need to examine the type definitions to ensure compatibility.
+  #~content
+#~text
 ```
 
 All path must be absolute and use forward slashes (/) as the path separator.
 
-Remove all comments from your final output
+Remove all comments from your final output, except `#~xxx` in the end of each block
 
 #H[YAML Multi-line Block Scalar Syntax Rules][
   ```yaml
@@ -108,10 +140,17 @@ Ensure proper indentation
         replace:
           - startLine: 1
             endLine: 3
-            data: |+
-              using System;
-              using System.Collections.Generic;
-              using System.Linq;
+            data: 
+              baseIndent: ""
+              content: |+
+                using System;
+                using System.Collections.Generic;
+                using System.Linq;
+              #~content
+            #~data
+          #~-
+        #~replace
+      #~-
       ```
     ]
     #H[Incorrect example][
@@ -121,18 +160,33 @@ Ensure proper indentation
         replace:
           - startLine: 1
             endLine: 1
-            data: |+
-              using System;
-            #
+            data: 
+              baseIndent: ""
+              content: |+
+                using System;
+              #~content
+            #~data
+          #~-
           - startLine: 2
             endLine: 2
-            data: |+
-              using System.Collections.Generic;
-            #
+            data: 
+              baseIndent: ""
+              content:  |+
+                  using System.Collections.Generic;
+              #~content
+            #~data
+          #~-
           - startLine: 3
             endLine: 3
-            data: |+
-              using System.Linq;
+            data: 
+              baseIndent: ""
+              content: |+
+                using System.Linq;
+              #~content
+            #~data
+          #~-
+        #~replace
+      #~-
       ```
     ]
   ]

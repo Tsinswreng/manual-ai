@@ -35,7 +35,11 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 		const finalReq = new FinalReq();
 		finalReq.unixMs = Date.now();
 		// 处理文本内容，兼容undefined情况
-		finalReq.text = rawReq.text ?? "";
+		if (rawReq.text) {
+			finalReq.text = {
+				content: rawReq.text
+			};
+		}
 		finalReq.files = [];
 
 		// 无文件配置时，直接返回空文件的最终请求
@@ -153,7 +157,9 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 				const fileCtx = new FileCtx();
 				fileCtx.path = filePath;
 				fileCtx.issues = []
-				fileCtx.contentWithLineNum = contentWithLineNum;
+				fileCtx.contentWithLineNum = {
+					content: contentWithLineNum
+				};
 
 				return fileCtx as IFileCtx;
 			} catch (error) {

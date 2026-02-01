@@ -10,15 +10,15 @@ Example Structure (comments show requirements; remove all comments in actual out
 # Array of operation objects (can be empty). Include only the operations you need.
 operations:
   # Line-based replacement (for initial edits)
-  # 
   - type: replaceByLine
-    # if path does not exist, it will be created.
+    # if path does not exist, it will be created. if you want to create new file, just set path to the new file name and set both startLine and endLine to 1.
     path: e:/code/src/components/Button.tsx
     replace:
       - startLine: 15       # starts from 1, included, can be larger than file length
         endLine: 23         # included, can be larger than file length
         data:
-          baseIndent: "    " # base indent for the content, which means each line would have another "    " at the beginning
+          baseIndent: "    " # base indent for the content, which means each line will have another "    " at the beginning
+          # content can be null, which means to delete from startLine to endLine
           content: |+
             const handleClick = () => {
                 console.log("clicked");
@@ -27,10 +27,10 @@ operations:
           #~content
         #~data
       #~-
-      - startLine: 45       # Multiple ranges allowed
-        endLine: 45         # Single line replacement
+      - startLine: 45
+        endLine: 45
         data: 
-          baseIndent: "" # "" means no baseIndent
+          baseIndent: "" # this means no baseIndent
           content: |+
             import { useState } from 'react';
           #~content
@@ -43,19 +43,19 @@ operations:
     path: e:/code/src/components/Button.tsx
     replace:
       - match: 
-          baseIndent: "" # you can also directly add indent to the content like below, in this way you don't need to specify baseIndent
+          baseIndent: "\t\t"
           content: |+ # Must match exactly, including indentation, whitespace, etc.
-            		function oldHandler() {
-            			return false;
-            		}
+            function oldHandler() {
+            	return false;
+            }
           #~content
         #~match
         replacement: 
-          baseIndent: ""
+          baseIndent: "\t\t"
           content: |+
-            		function newHandler() {
-            			return true;
-            		}
+            function newHandler() {
+            	return true;
+            }
           #~content
         #~replacement
       #~-
@@ -91,7 +91,7 @@ text:
 
 All path must be absolute and use forward slashes (/) as the path separator.
 
-Remove all comments from your final output, except `#~xxx` in the end of each block
+Remove all comments from your final output, except for `#~xxx` in the end of each block
 
 #H[YAML Multi-line Block Scalar Syntax Rules][
   ```yaml
@@ -124,6 +124,7 @@ Remove all comments from your final output, except `#~xxx` in the end of each bl
 ]
 
 
+
 Ensure proper indentation
 
 #H[Key Replacement Rule][
@@ -139,13 +140,12 @@ Ensure proper indentation
         path: e:/code/src/components/Button.tsx
         replace:
           - startLine: 1
-            endLine: 3
+            endLine: 2
             data: 
               baseIndent: ""
               content: |+
                 using System;
                 using System.Collections.Generic;
-                using System.Linq;
               #~content
             #~data
           #~-
@@ -176,15 +176,6 @@ Ensure proper indentation
               #~content
             #~data
           #~-
-          - startLine: 3
-            endLine: 3
-            data: 
-              baseIndent: ""
-              content: |+
-                using System.Linq;
-              #~content
-            #~data
-          #~-
         #~replace
       #~-
       ```
@@ -196,19 +187,16 @@ Ensure proper indentation
   if the user use tabs for intent then you should also use tabs, vice versa, if the user use spaces for indent, you should also use spaces too.
 
   #H[e.g][
-
-
-
     if the code that user provided is
     ```cs
     File: e:/Program.cs
     1|				if(true){
     2|					for(var i = 0; i < list.Count; i++){
-    3|				
+    3|						handle(list[i]);
     4|					}
-    }
+    5|				}
     ```
-    and the user asks you to replace the `for` loop with `foreach` loop.
+    and the user asks you to convert the `for` loop to `foreach` loop.
 
     you can see:
     the user use tab for indent, and the for loop has five layer of indent (five tabs).
@@ -216,28 +204,72 @@ Ensure proper indentation
 
     you should provide the following YAML output:
 
-    correct example:{
+    #H[Correct example][
       ```yaml
       operations:
         - type: replaceByLine
           path: e:/Program.cs
           replace:
             - startLine: 2
-              endLine: 2
-              data: |+ # 5 tabs for indent
-                          foreach(var i in list){
+              endLine: 4
+              data: 
+                baseIndent: "\t\t\t\t\t" # 5 tabs for indent
+                content: |+ 
+                  foreach(var item in list){
+                  	handle(item);
+                  }
+                #~content
+              #~data
+            #~-
+          #~replace
+        #~-
+      #~operations
       ```
-      in this way, after deserialize, `data` would be "\t\t\t\t\tforeach(var i in list){"
+    ]
+
+    you can also directly add indent to the content like below, in this way you don't need to specify baseIndent: (*not recommended, since LLM usually can't output the correct format well*)
+    
+    #H[Correct example 2 of directly adding indent to the content (not recommended)][
+      ```yaml
+      operations:
+        - type: replaceByLine
+          path: e:/Program.cs
+          replace:
+            - startLine: 2
+              endLine: 4
+              data: 
+                baseIndent: "" 
+                content: |+ # directly add indent to the content
+                  					foreach(var item in list){
+                  						handle(item);
+                  					}
+                #~content
+              #~data
+            #~-
+          #~replace
+        #~-
+      #~operations
+      ```
+    ]
+
+      in this way, after deserialize, it would be: `{data: "\t\t\t\t\tforeach(var item in list){"`
     }
 
-    #H[incorrect example][
+
+    #H[Incorrect example 1][
       ```yaml
       #...
-      data: |+
-        foreach(var i in list){
+      data: 
+        baseIndent: ""
+        content: |+
+          foreach(var i in list){
+          	handle(i);
+          }
+        #~content
+      #~data
       ```
 
-      in this way, after deserialize, `data` would be `foreach(var i in list){` without any indentation. this is incorrect
+      in this way, after deserialize, it would be `{data: "foreach(var item in list){"` without any indentation. this is incorrect
     ]
 
   ]

@@ -8,7 +8,7 @@ abstract class BaseYaml implements IFromEtToYaml {
 	toYaml(o?: any): string {
 		const target = o || this;
 		const doc = new Document(target);
-		return String(doc);
+return yamlDocToStr(doc);
 	}
 
 	fromYaml(yaml: string, o?: any): void {
@@ -44,7 +44,7 @@ export class FileCtx extends BaseYaml implements IFileCtx {
 		// 强制 contentWithLineNum 字段使用多行文本块语法
 		doc.set('contentWithLineNum', yamlMultiLine(target.contentWithLineNum));
 
-		return String(doc);
+return yamlDocToStr(doc);
 	}
 }
 

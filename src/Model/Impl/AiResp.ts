@@ -12,14 +12,14 @@ import {
 	EOperateType
 } from "../AiResp";
 import { parse, Document } from 'yaml';
-import { yamlMultiLine } from "./yamlMultiLine";
+import { yamlMultiLine, yamlDocToStr } from "./yamlMultiLine";
 
 // 基础实现类，提供通用的 toYaml 和 fromYaml 方法
 abstract class BaseYaml implements IFromEtToYaml {
 	toYaml(o?: any): string {
 		const target = o || this;
 		const doc = new Document(target);
-		return String(doc);
+return yamlDocToStr(doc);
 	}
 
 	fromYaml(yaml: string, o?: any): void {
@@ -52,7 +52,7 @@ export class LineRangeReplace extends BaseYaml implements ILineRangeReplace {
 		// 强制 data 字段使用多行文本块语法
 		doc.set('data', yamlMultiLine(target.data));
 
-		return String(doc);
+return yamlDocToStr(doc);
 	}
 }
 
@@ -78,7 +78,7 @@ export class SnippetReplace extends BaseYaml implements ISnippetReplace {
 		// 强制 replacement 字段使用多行文本块语法
 		doc.set('replacement', yamlMultiLine(target.replacement));
 
-		return String(doc);
+return yamlDocToStr(doc);
 	}
 }
 
@@ -179,6 +179,6 @@ export class AiResp extends BaseYaml implements IAiResp {
 		// 强制 text 字段使用多行文本块语法
 		doc.set('text', yamlMultiLine(target.text));
 
-		return String(doc);
+return yamlDocToStr(doc);
 	}
 }

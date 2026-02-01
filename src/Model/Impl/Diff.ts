@@ -1,13 +1,13 @@
 import { IFromEtToYaml } from "../IFromEtToYaml";
 import { IChanges, IChangedFileMap } from "../Diff";
 import { parse, Document } from 'yaml';
-
+import { yamlDocToStr } from "./yamlMultiLine";
 // 基础实现类，提供通用的 toYaml 和 fromYaml 方法
 abstract class BaseYaml implements IFromEtToYaml {
 	toYaml(o?: any): string {
 		const target = o || this;
 		const doc = new Document(target);
-		return String(doc);
+return yamlDocToStr(doc);
 	}
 
 	fromYaml(yaml: string, o?: any): void {

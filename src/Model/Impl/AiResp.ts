@@ -16,7 +16,7 @@ import { parse, Document } from 'yaml';
 import { yamlMultiLine, yamlDocToStr } from "./yamlMultiLine";
 
 // 基础实现类，提供通用的 toYaml 和 fromYaml 方法
-abstract class BaseYaml implements IFromEtToYaml {
+export abstract class BaseYaml implements IFromEtToYaml {
 	toYaml(o?: any): string {
 		const target = o || this;
 		const doc = new Document(target);

@@ -2,7 +2,22 @@ import { stringify, Scalar, Document, parse } from 'yaml'
 import * as fs from 'fs'
 import { LineNumAttacher } from './Tools/ILineNumAttacher'
 
-trySerial2()
+//trySerial2()
+
+/* 
+arr:
+  - |-
+    a
+  - |- 
+    b
+  - |- 
+    c
+*/
+function trySerial3(){
+	const doc = new Document()
+	const arr = ["a", "b", "c"]
+
+}
 
 function trySerial(){
 	const doc = new Document()

@@ -82,7 +82,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 			// 转换为 FinalReq
 			const converter = RawReqToFinalReqConvtr.inst;
-			const finalReq = await converter.convert(rawReq, ct);
+			const finalReq = await converter.rawReqToFinalReq(rawReq, ct);
 
 			// 序列化为 YAML 字符串
 			const finalReqYaml = finalReq.toYaml();

@@ -7,9 +7,15 @@ import { CT } from "../../CT";
 import { glob } from "glob";
 import { NullableList } from "../../NullableList";
 import { LineNormalizer } from "../../Tools/LineNormalizer";
+import { ICommonLlmReq } from "../CommonLlmReq";
 
 export interface IRawReqToFinalReqConvtr {
-	convert(rawReq: IRawReq, ct?: CT): Promise<IFinalReq>;
+	rawReqToFinalReq(rawReq: IRawReq, ct?: CT): Promise<IFinalReq>;
+}
+
+export interface IFinalReqToCommonLlmReq{
+	
+	finalReqToCommonLlmReq(finalReq: IFinalReq, ct?: CT): Promise<ICommonLlmReq>;
 }
 
 
@@ -30,7 +36,7 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 	 * @param ct 上下文对象（预留扩展，如后续获取文件语法错误issues）
 	 * @returns 处理后的最终AI请求
 	 */
-	public async convert(rawReq: IRawReq, ct?: CT): Promise<IFinalReq> {
+	public async rawReqToFinalReq(rawReq: IRawReq, ct?: CT): Promise<IFinalReq> {
 		// 初始化最终请求，设置当前时间戳
 		const finalReq = new FinalReq();
 		finalReq.unixMs = Date.now();

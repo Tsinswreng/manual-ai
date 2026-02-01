@@ -24,4 +24,3 @@ export interface IRawReq extends IFromEtToYaml{
 	/** 用yaml多行文本塊規則 */
 	text?: string
 }
-//d

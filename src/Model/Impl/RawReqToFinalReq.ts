@@ -10,13 +10,15 @@ import { LineNormalizer } from "../../Tools/LineNormalizer";
 import { ICommonLlmReq } from "../CommonLlmReq";
 import { CommonLlmReq, RoleEtContentImpl } from "./CommonLlmReq";
 import { SysPrompt } from "../../SysPrompt";
+import * as vscode from 'vscode';
+import { UnixPathNormalizer } from "../../Tools/UnixPathNormalizer";
 
 export interface IRawReqToFinalReqConvtr {
 	rawReqToFinalReq(rawReq: IRawReq, ct?: CT): Promise<IFinalReq>;
 }
 
-export interface IFinalReqToCommonLlmReq{
-	
+export interface IFinalReqToCommonLlmReq {
+
 	finalReqToCommonLlmReq(finalReq: IFinalReq, ct?: CT): Promise<ICommonLlmReq>;
 }
 
@@ -57,7 +59,8 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 
 		try {
 			// 步骤1：解析并过滤出最终需要处理的文件路径
-			const targetFilePaths = await this.resolveFilePaths(rawReq.files);
+			let targetFilePaths = await this.resolveFilePaths(rawReq.files);
+			targetFilePaths = targetFilePaths.map(x=>UnixPathNormalizer.inst.normalizePath(x));
 			if (targetFilePaths.length === 0) {
 				return finalReq;
 			}
@@ -92,7 +95,8 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 		// 1. 解析glob通配符，获取初始文件列表
 		let fileList: string[] = [];
 		for (const path of paths) {
-			const matched = await glob(path, { nodir: true }); // 只匹配文件，排除目录
+			let matched = await glob(path, { nodir: true }); // 只匹配文件，排除目录
+			matched = matched.map(x=>UnixPathNormalizer.inst.normalizePath(x));
 			fileList = fileList.concat(matched);
 		}
 
@@ -134,37 +138,51 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 		return fileList;
 	}
 
-	/**
-	 * 批量构建文件上下文列表
-	 * @param filePaths 目标文件路径数组
-	 * @param lineNumAttacher 行号附加工具
-	 * @param ct 上下文对象（预留，后续可从ct获取文件issues如语法错误）
-	 * @returns 文件上下文实例数组
-	 */
 	private async buildFileCtxList(
 		filePaths: string[],
 		lineNumAttacher: LineNumAttacher,
 		ct?: CT
 	): Promise<IFileCtx[]> {
-		// 并行处理文件，提高效率
+		// 步骤1：获取「项目所有文件」的诊断，并按文件URI分组（解决激活编辑器问题）
+		const allDiagnostics = vscode.languages.getDiagnostics(); // 传undefined获取所有文件诊断
+		// 构建「URI路径 -> 错误诊断数组」的映射，提升后续匹配效率
+		const diagnosticMap = new Map<string, vscode.Diagnostic[]>();
+		allDiagnostics.forEach(([uri, diags]) => {
+			const errorDiags = diags.filter(d => d.severity === vscode.DiagnosticSeverity.Error);
+			if (errorDiags.length > 0) {
+				const path = UnixPathNormalizer.inst.normalizePath(uri.fsPath);
+				diagnosticMap.set(path, errorDiags);
+			}
+		});
+
+		// 步骤2：并行处理文件
 		const fileCtxPromises = filePaths.map(async (filePath) => {
 			try {
-				// 1. 读取文件内容（utf8编码，适配所有文本文件）
+				// 读取文件内容（同方案1，略）
 				let content = await fs.readFile(filePath, "utf8");
 				content = content.replaceAll("\r\n", "\n");
 				const lines = content.split('\n')
 				const contentWithLineNum = lines
 					.map((singleLine, index) => {
-						const lineNum = index + 1; // 行号从1开始，匹配项目所有注释约定
-						const l = singleLine
-						return lineNumAttacher.attachLineNum(l, lineNum, lines.length);
+						const lineNum = index + 1;
+						return lineNumAttacher.attachLineNum(singleLine, lineNum, lines.length);
 					})
 					.join('\n');
-				//const contentWithLineNum = content
-				// 3. 构建FileCtx实例（issues暂留空，预留从ct扩展获取语法错误的能力）
+
+				// 步骤3：从预分组的映射中获取当前文件的错误诊断（O(1)匹配，效率更高）
+				const fileErrorDiagnostics = diagnosticMap.get(filePath) || [];
+
+				// 构建FileCtx（含序列化循环引用处理，同方案1）
 				const fileCtx = new FileCtx();
 				fileCtx.path = filePath;
-				fileCtx.issues = []
+				fileCtx.issues = fileErrorDiagnostics.map(d =>
+					JSON.stringify(d, (key, value) => {
+						if (key === 'uri' && value instanceof vscode.Uri) {
+							return value.fsPath;
+						}
+						return value;
+					})
+				);
 				fileCtx.contentWithLineNum = {
 					content: contentWithLineNum
 				};
@@ -176,7 +194,6 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 			}
 		});
 
-		// 过滤掉处理失败的文件，返回有效FileCtx
 		const results = await Promise.all(fileCtxPromises);
 		return results.filter((ctx): ctx is IFileCtx => ctx !== null);
 	}

@@ -9,10 +9,10 @@ import { CT } from "../CT";
  * @param ct 取消令牌
  */
 export async function ensureDir(path: string, ct: CT): Promise<void> {
-    const dir = dirname(path);
-    if (!existsSync(dir)) {
-        mkdirSync(dir, { recursive: true });
-    }
+	const dir = dirname(path);
+	if (!existsSync(dir)) {
+		mkdirSync(dir, { recursive: true });
+	}
 }
 
 /**
@@ -21,10 +21,10 @@ export async function ensureDir(path: string, ct: CT): Promise<void> {
  * @param ct 取消令牌
  */
 export async function ensureFile(path: string, ct: CT): Promise<void> {
-    await ensureDir(path, ct);
-    if (!existsSync(path)) {
-        await fs.writeFile(path, '', 'utf8');
-    }
+	await ensureDir(path, ct);
+	if (!existsSync(path)) {
+		await fs.writeFile(path, '', 'utf8');
+	}
 }
 
 /**
@@ -34,8 +34,8 @@ export async function ensureFile(path: string, ct: CT): Promise<void> {
  * @returns 文件内容
  */
 export async function readFile(path: string, ct: CT): Promise<string> {
-    await ensureFile(path, ct);
-    return await fs.readFile(path, 'utf8');
+	await ensureFile(path, ct);
+	return await fs.readFile(path, 'utf8');
 }
 
 /**
@@ -45,6 +45,6 @@ export async function readFile(path: string, ct: CT): Promise<string> {
  * @param ct 取消令牌
  */
 export async function writeFile(path: string, content: string, ct: CT): Promise<void> {
-    await ensureDir(path, ct);
-    await fs.writeFile(path, content, 'utf8');
+	await ensureDir(path, ct);
+	await fs.writeFile(path, content, 'utf8');
 }

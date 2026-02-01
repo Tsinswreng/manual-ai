@@ -4,6 +4,7 @@ export interface IInteractFiles {
 	get UserInput():string;
 	get FinalReq():string;
 	get LlmResp():string;
+	get ExeOp():string
 	get Diff_Changes():string
 	get Diff_Files():string
 }
@@ -40,6 +41,8 @@ export function mkIInteractFiles(base: string):IInteractFiles{
 		UserInput: j("Io/UserInput.yaml"),
 		FinalReq: j("Io/FinalReq.yaml"),
 		LlmResp: j("Io/LlmResp.yaml"),
+		/** 直接執行、不存入diff */
+		ExeOp: j("Io/ExeOp.yaml"),
 		Diff_Changes: j("Diff/Changes.yaml"),
 		Diff_Files: j("Diff/Files/"),
 	}

@@ -7,21 +7,29 @@ import { promises as fs } from 'fs';
 import { AiResp } from './Model/Impl/AiResp';
 import { ChangeApplyer } from './ChangeApplyer';
 import { IOpWriteFile } from './Model/AiResp';
+import { InteractFilesGetter } from './InteractFiles';
+import { ensureFile } from './Tools/FileUtils';
 
 export function activate(context: vscode.ExtensionContext) {
 	let disposable = vscode.commands.registerCommand('manual-ai.ApplyChangesFromYaml', async () => {
 		// 让用户输入 YAML 文件路径
-		const filePath = await vscode.window.showInputBox({
+		let filePath = await vscode.window.showInputBox({
 			placeHolder: '请输入 YAML 文件路径',
 			prompt: '输入要应用的 YAML 文件路径'
 		});
 
-		if (!filePath) {
-			vscode.window.showErrorMessage('未提供文件路径');
-			return;
+		// 当用户没传入文件路径时，使用默认路径
+		if (!filePath || filePath.trim() === '') {
+			filePath = InteractFilesGetter.inst.getInteractFiles().ExeOp;
 		}
 
 		try {
+			// 获取当前编辑器的取消令牌
+			const ct = new vscode.CancellationTokenSource().token;
+			
+			// 确保文件存在
+			await ensureFile(filePath, ct);
+			
 			// 读取 YAML 文件内容
 			const yamlContent = await fs.readFile(filePath, 'utf8');
 			
@@ -31,9 +39,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 			// 应用更改
 			const changeApplyer = new ChangeApplyer();
-			
-			// 获取当前编辑器的取消令牌
-			const ct = new vscode.CancellationTokenSource().token;
 
 			// 只处理写操作
 			const writeOperations = aiResp.operations.filter(op => op.type === 'replaceByLine' || op.type === 'replaceBySnippet') as IOpWriteFile[];

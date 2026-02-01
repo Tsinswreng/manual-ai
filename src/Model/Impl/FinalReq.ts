@@ -1,7 +1,7 @@
 import { IFromEtToYaml } from "../IFromEtToYaml";
 import { IFinalReq, IFileCtx } from "../FinalReq";
 import { parse, Document } from 'yaml';
-import { yamlMultiLine } from "./yamlMultiLine";
+import { yamlDocToStr, yamlMultiLine } from "./yamlMultiLine";
 
 // 基础实现类，提供通用的 toYaml 和 fromYaml 方法
 abstract class BaseYaml implements IFromEtToYaml {
@@ -33,12 +33,12 @@ export class FileCtx extends BaseYaml implements IFileCtx {
 	}
 
 	toYaml(o?: any): string {
-		const target = o || this;
+		const target = (o?? this) as IFileCtx;
 		const doc = new Document();
 		doc.set('path', target.path);
 
 		// 强制 issues 字段使用多行文本块语法
-		const issues = target.issues.map((issue: string) => yamlMultiLine(issue));
+		const issues = target.issues?.map((issue) => yamlMultiLine(issue));
 		doc.set('issues', issues);
 
 		// 强制 contentWithLineNum 字段使用多行文本块语法
@@ -70,7 +70,6 @@ export class FinalReq extends BaseYaml implements IFinalReq {
 
 		// 强制 text 字段使用多行文本块语法
 		doc.set('text', yamlMultiLine(target.text));
-
-		return String(doc);
+		return yamlDocToStr(doc);
 	}
 }

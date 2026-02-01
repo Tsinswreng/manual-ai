@@ -1,134 +1,172 @@
-import { IRawReq } from "../RawReq";
+import { IFiles, IRawReq, IRegexs } from "../RawReq";
 import { IFinalReq, IFileCtx } from "../FinalReq";
 import { FinalReq, FileCtx } from "./FinalReq";
 import { LineNumAttacher } from "../../Tools/ILineNumAttacher";
 import { promises as fs } from "fs";
 import { CT } from "../../CT";
 import { glob } from "glob";
+import { NullableList } from "../../NullableList";
+import { LineNormalizer } from "../../Tools/LineNormalizer";
 
-export interface IRawReqToFinalReqConvtr{
+export interface IRawReqToFinalReqConvtr {
 	convert(rawReq: IRawReq, ct?: CT): Promise<IFinalReq>;
 }
 
-/**
- * RawReq 转换为 FinalReq 的工具类
- */
-export class RawReqToFinalReq implements IRawReqToFinalReqConvtr {
-	static inst = new this();
-	private lineNumAttacher = LineNumAttacher.inst;
 
+
+/**
+ * 原始请求转最终AI请求 实现类
+ * 核心职责：
+ * 1. 解析文件路径（glob通配符 + includes/excludes正则过滤）
+ * 2. 读取文件内容并附加行号
+ * 3. 构建FileCtx和FinalReq实例
+ * 4. 兼容空值、未定义等边界情况
+ */
+export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
+	static inst = new this();
 	/**
-	 * 将 RawReq 转换为 FinalReq
-	 * @param rawReq 原始请求
-	 * @param ct 取消令牌
-	 * @returns 最终请求
+	 * 核心转换方法
+	 * @param rawReq 人类手寫的原始请求
+	 * @param ct 上下文对象（预留扩展，如后续获取文件语法错误issues）
+	 * @returns 处理后的最终AI请求
 	 */
-	async convert(rawReq: IRawReq, ct?: CT): Promise<IFinalReq> {
+	public async convert(rawReq: IRawReq, ct?: CT): Promise<IFinalReq> {
+		// 初始化最终请求，设置当前时间戳
 		const finalReq = new FinalReq();
 		finalReq.unixMs = Date.now();
-		finalReq.text = rawReq.text || '';
+		// 处理文本内容，兼容undefined情况
+		finalReq.text = rawReq.text ?? "";
 		finalReq.files = [];
 
-		// 处理文件
-		if (rawReq.files) {
-			// 处理直接指定的文件路径
-			const filePaths = await this.getMatchedFiles(rawReq.files.paths, rawReq.files.regex);
-			for (const filePath of filePaths) {
-				const fileCtx = await this.createFileCtx(filePath, ct);
-				finalReq.files.push(fileCtx);
+		// 无文件配置时，直接返回空文件的最终请求
+		if (!rawReq.files) {
+			return finalReq;
+		}
+
+		try {
+			// 步骤1：解析并过滤出最终需要处理的文件路径
+			const targetFilePaths = await this.resolveFilePaths(rawReq.files);
+			if (targetFilePaths.length === 0) {
+				return finalReq;
 			}
+
+			// 步骤2：初始化行号附加工具（项目现有工具，按约定使用）
+			const lineNumAttacher = LineNumAttacher.inst;
+			// 步骤3：批量处理文件，构建FileCtx实例
+			const fileCtxList = await this.buildFileCtxList(
+				targetFilePaths,
+				lineNumAttacher,
+				ct
+			);
+
+			// 步骤4：赋值到最终请求
+			finalReq.files = fileCtxList
+		} catch (error) {
+			console.warn("[RawReqToFinalReq] 文件处理警告：", (error as Error).message);
 		}
 
 		return finalReq;
 	}
 
 	/**
-	 * 获取匹配的文件路径
-	 * @param paths 文件路径数组（支持通配符）
-	 * @param regex 正则表达式配置
-	 * @returns 匹配的文件路径数组
+	 * 解析文件路径：glob通配符解析 + includes/excludes正则过滤 + 路径去重
+	 * @param files 原始文件配置（paths+regex）
+	 * @returns 去重后的目标文件绝对/相对路径数组
 	 */
-	private async getMatchedFiles(paths: string[], regex: { includes: string[], excludes: string[] }): Promise<string[]> {
-		const allFiles: string[] = [];
+	private async resolveFilePaths(files: IFiles): Promise<string[]> {
+		const { paths = [], regex = {} } = files;
+		const { includes, excludes } = regex;
 
-		for (const pathPattern of paths) {
-			// 使用 glob 匹配文件
-			const matchedFiles = await glob(pathPattern);
-			// 应用正则表达式过滤
-			const filteredFiles = matchedFiles.filter(filePath => this.matchesRegex(filePath, regex));
-			allFiles.push(...filteredFiles);
+		// 1. 解析glob通配符，获取初始文件列表
+		let fileList: string[] = [];
+		for (const path of paths) {
+			const matched = await glob(path, { nodir: true }); // 只匹配文件，排除目录
+			fileList = fileList.concat(matched);
 		}
 
-		// 去重
-		return Array.from(new Set(allFiles));
+		// 2. 应用正则过滤（includes->保留，excludes->排除）
+		fileList = this.filterByRegex(fileList, includes, excludes);
+
+		// 3. 路径去重，避免重复处理同一文件
+		return [...new Set(fileList)];
 	}
 
 	/**
-	 * 检查文件路径是否匹配正则表达式配置
-	 * @param filePath 文件路径
-	 * @param regex 正则表达式配置
-	 * @returns 是否匹配
+	 * 正则过滤文件路径
+	 * @param fileList 待过滤的文件路径列表
+	 * @param includes 包含正则（空则不过滤，全部保留）
+	 * @param excludes 排除正则（空则不排除）
+	 * @returns 过滤后的文件列表
 	 */
-	private matchesRegex(filePath: string, regex: { includes: string[], excludes: string[] }): boolean {
-		// 检查是否被排除
-		if (regex.excludes.length > 0) {
-			const matchExclude = regex.excludes.some(pattern => {
-				const regex = new RegExp(pattern);
-				return regex.test(filePath);
-			});
-			if (matchExclude) {
-				return false;
+	private filterByRegex(
+		fileList: string[],
+		includes?: string[],
+		excludes?: string[]
+	): string[] {
+		// 处理包含正则：只有匹配任意一个includes的文件才保留
+		if (includes && includes.length > 0) {
+			const includeRegexs = includes.map(p => new RegExp(p, "i")); // 忽略大小写，适配不同系统路径
+			fileList = fileList.filter(filePath =>
+				includeRegexs.some(re => re.test(filePath))
+			);
+		}
+
+		// 处理排除正则：匹配任意一个excludes的文件直接排除
+		if (excludes && excludes.length > 0) {
+			const excludeRegexs = excludes.map(p => new RegExp(p, "i"));
+			fileList = fileList.filter(filePath =>
+				!excludeRegexs.some(re => re.test(filePath))
+			);
+		}
+
+		return fileList;
+	}
+
+	/**
+	 * 批量构建文件上下文列表
+	 * @param filePaths 目标文件路径数组
+	 * @param lineNumAttacher 行号附加工具
+	 * @param ct 上下文对象（预留，后续可从ct获取文件issues如语法错误）
+	 * @returns 文件上下文实例数组
+	 */
+	private async buildFileCtxList(
+		filePaths: string[],
+		lineNumAttacher: LineNumAttacher,
+		ct?: CT
+	): Promise<IFileCtx[]> {
+		// 并行处理文件，提高效率
+		const fileCtxPromises = filePaths.map(async (filePath) => {
+			try {
+				// 1. 读取文件内容（utf8编码，适配所有文本文件）
+				let content = await fs.readFile(filePath, "utf8");
+				content = content.replaceAll("\r\n", "\n");
+				const lines = content.split('\n')
+				const contentWithLineNum = lines
+					.map((singleLine, index) => {
+						const lineNum = index + 1; // 行号从1开始，匹配项目所有注释约定
+						const l = singleLine
+						return lineNumAttacher.attachLineNum(l, lineNum, lines.length);
+					})
+					.join('\n');
+				//const contentWithLineNum = content
+				// 3. 构建FileCtx实例（issues暂留空，预留从ct扩展获取语法错误的能力）
+				const fileCtx = new FileCtx();
+				fileCtx.path = filePath;
+				fileCtx.issues = []
+				fileCtx.contentWithLineNum = contentWithLineNum;
+
+				return fileCtx as IFileCtx;
+			} catch (error) {
+				console.warn(`[RawReqToFinalReq] 跳过文件${filePath}：`, (error as Error).message);
+				return null;
 			}
-		}
-
-		// 检查是否被包含（如果没有配置包含规则，则默认全部包含）
-		if (regex.includes.length === 0) {
-			return true;
-		}
-
-		return regex.includes.some(pattern => {
-			const regex = new RegExp(pattern);
-			return regex.test(filePath);
 		});
-	}
 
-	/**
-	 * 创建文件上下文
-	 * @param filePath 文件路径
-	 * @param ct 取消令牌
-	 * @returns 文件上下文
-	 */
-	private async createFileCtx(filePath: string, ct?: CT): Promise<IFileCtx> {
-		const fileCtx = new FileCtx();
-		fileCtx.path = filePath;
-		fileCtx.issues = []; // 暂时为空，需要时可以从其他来源获取
-
-		// 读取文件内容
-		try {
-			const content = await fs.readFile(filePath, 'utf8');
-			fileCtx.contentWithLineNum = this.attachLineNumbers(content);
-		} catch (error) {
-			console.error(`无法读取文件: ${filePath}`, error);
-			fileCtx.contentWithLineNum = '';
-		}
-
-		return fileCtx;
-	}
-
-	/**
-	 * 为文件内容添加行号
-	 * @param content 文件内容
-	 * @returns 带行号的内容
-	 */
-	private attachLineNumbers(content: string): string {
-		const lines = content.split(/\r\n?/); // 处理所有换行符
-		const maxLineNum = lines.length;
-		const lineNumWidth = maxLineNum.toString().length;
-
-		return lines.map((line, index) => {
-			const lineNum = index + 1;
-			const paddedLineNum = lineNum.toString().padStart(lineNumWidth, '0');
-			return `${paddedLineNum}|${line}`;
-		}).join('\n'); // 统一使用 \n 换行符
+		// 过滤掉处理失败的文件，返回有效FileCtx
+		const results = await Promise.all(fileCtxPromises);
+		return results.filter((ctx): ctx is IFileCtx => ctx !== null);
 	}
 }
+
+// 导出单例（方便项目中直接使用，也可通过new实例化）
+export const rawReqToFinalReqConvtr = new RawReqToFinalReqConvtr();

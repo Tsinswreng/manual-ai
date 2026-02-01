@@ -10,8 +10,8 @@ import { IOpWriteFile } from './Model/AiResp';
 import { InteractFilesGetter } from './InteractFiles';
 import { ensureFile, writeFile } from './Tools/FileUtils';
 import { RawReq } from './Model/Impl/RawReq';
-import { RawReqToFinalReq } from './Model/Impl/RawReqToFinalReq';
 import { FinalReq } from './Model/Impl/FinalReq';
+import { RawReqToFinalReqConvtr } from './Model/Impl/RawReqToFinalReq';
 
 export function activate(context: vscode.ExtensionContext) {
 	let disposable1 = vscode.commands.registerCommand('manual-ai.ApplyChangesFromYaml', async () => {
@@ -81,7 +81,7 @@ export function activate(context: vscode.ExtensionContext) {
 			rawReq.fromYaml(yamlContent);
 
 			// 转换为 FinalReq
-			const converter = RawReqToFinalReq.inst;
+			const converter = RawReqToFinalReqConvtr.inst;
 			const finalReq = await converter.convert(rawReq, ct);
 
 			// 序列化为 YAML 字符串

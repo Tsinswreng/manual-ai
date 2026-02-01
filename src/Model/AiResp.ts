@@ -1,3 +1,4 @@
+import { NullableList } from "../NullableList"
 import { IFromEtToYaml } from "./IFromEtToYaml"
 
 /** AI回答 之 操作類型 */
@@ -95,7 +96,7 @@ export interface ILineEtSymbol{
 
 /** 查找符號定義 */
 export interface IOpSeekDef extends IOperation, I_path{
-	symbols: ILineEtSymbol[]
+	symbols?: ILineEtSymbol[]
 }
 
 /** AI再請求讀多個文件
@@ -112,7 +113,7 @@ export interface IAiResp extends IFromEtToYaml{
 	 * 因 是網頁AI、使AI答今之時間則不善。故爲代碼中處理後自動添加
 	 */
 	reqUnixMs?:number
-	operations: IOperation[]
+	operations?: IOperation[]
 	/** 講解。給人看 不與編輯器交互
 	 * 用yaml可空多行文本塊規則 */
 	text?: string

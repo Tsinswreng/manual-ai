@@ -1,5 +1,8 @@
 import { stringify, Scalar, Document, parse } from 'yaml'
+import * as fs from 'fs'
+import { LineNumAttacher } from './Tools/ILineNumAttacher'
 
+trySerial2()
 
 function trySerial(){
 	const doc = new Document()
@@ -20,7 +23,38 @@ function trySerial(){
 	doc.set('text2', s2)
 	doc.set('text3', s3)
 	doc.set('hello', 'Hello, world!')
+	console.log(JSON.stringify(s))
+	console.log(String(doc))
+}
 
+function trySerial2(){
+	const doc = new Document()
+	// 強制文本塊
+	const s = new Scalar(
+`const o = {
+	text: 'Hello, world!',
+}`)
+	s.type = 'BLOCK_LITERAL'	
+	doc.set('text', s)
+	
+	const s2 = new Scalar("111\r\n222\r\n")
+	s2.type = 'BLOCK_LITERAL'
+	doc.set('text2', s2)
+	
+	const s3 = new Scalar("111\n222\n")
+	s3.type = 'BLOCK_LITERAL'
+	doc.set('text3', s3)
+
+	let fileS = fs.readFileSync("E:/_code/ManualAi/manual-ai/Spec.typ", {encoding: "utf-8"})
+	fileS = fileS.replaceAll("\r\n", "\n")
+	const lines = fileS.split('\n')
+	fileS = lines.map((line, i)=>{
+		return LineNumAttacher.inst.attachLineNum(line, i, lines.length)
+	}).join('\n')
+	let file = new Scalar(fileS)
+	file.type = "BLOCK_LITERAL"
+	doc.set("file", file)
+	
 	console.log(String(doc))
 }
 
@@ -115,4 +149,3 @@ f: aaa
 }
 
 
-//tryParse5()

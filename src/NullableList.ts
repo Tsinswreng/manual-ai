@@ -1,0 +1,1 @@
+export type NullableList<T> = (T|undefined)[];

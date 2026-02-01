@@ -1,16 +1,17 @@
+import { NullableList } from "../NullableList"
 import { IFromEtToYaml } from "./IFromEtToYaml"
 
 export interface IRegexs{
 	/** 包含的文件 如 [".*svc.*ts$"] */
-	includes:string[]
+	includes?:string[]
 	/** 排除的文件 */
-	excludes:string[]
+	excludes?:string[]
 }
 
 export interface IFiles{
 	/** 多個文件路徑、支持文件通配符 */
-	paths:string[]
-	regex: IRegexs
+	paths?:string[]
+	regex?: IRegexs
 }
 
 

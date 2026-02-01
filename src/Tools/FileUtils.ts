@@ -8,11 +8,13 @@ import { CT } from "../CT";
  * @param path 文件路径
  * @param ct 取消令牌
  */
-export async function ensureDir(path: string, ct: CT): Promise<void> {
+export async function ensureDir(path: string, ct: CT): Promise<boolean> {
 	const dir = dirname(path);
-	if (!existsSync(dir)) {
+	const exists = existsSync(dir);
+	if (!exists) {
 		mkdirSync(dir, { recursive: true });
 	}
+	return exists;
 }
 
 /**
@@ -20,11 +22,13 @@ export async function ensureDir(path: string, ct: CT): Promise<void> {
  * @param path 文件路径
  * @param ct 取消令牌
  */
-export async function ensureFile(path: string, ct: CT): Promise<void> {
+export async function ensureFile(path: string, ct: CT): Promise<boolean> {
 	await ensureDir(path, ct);
-	if (!existsSync(path)) {
+	const exists = existsSync(path);
+	if (!exists) {
 		await fs.writeFile(path, '', 'utf8');
 	}
+	return exists;
 }
 
 /**

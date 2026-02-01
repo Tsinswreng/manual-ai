@@ -72,6 +72,10 @@ export function activate(context: vscode.ExtensionContext) {
 			// 读取 UserInput 文件内容
 			const yamlContent = await fs.readFile(interactFiles.UserInput, 'utf8');
 			
+			if(yamlContent == void 0 || yamlContent.trim() == ''){
+				return;
+			}
+			
 			// 反序列化为 RawReq 对象
 			const rawReq = new RawReq();
 			rawReq.fromYaml(yamlContent);

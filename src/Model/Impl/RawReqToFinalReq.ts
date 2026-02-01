@@ -8,6 +8,8 @@ import { glob } from "glob";
 import { NullableList } from "../../NullableList";
 import { LineNormalizer } from "../../Tools/LineNormalizer";
 import { ICommonLlmReq } from "../CommonLlmReq";
+import { CommonLlmReq, RoleEtContentImpl } from "./CommonLlmReq";
+import { SysPrompt } from "../../SysPrompt";
 
 export interface IRawReqToFinalReqConvtr {
 	rawReqToFinalReq(rawReq: IRawReq, ct?: CT): Promise<IFinalReq>;
@@ -180,5 +182,26 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 	}
 }
 
+// 最终请求转通用LLM请求 实现类
+export class FinalReqToCommonLlmReqConvtr implements IFinalReqToCommonLlmReq {
+	static inst = new this();
+
+	public async finalReqToCommonLlmReq(finalReq: IFinalReq, ct?: CT): Promise<ICommonLlmReq> {
+		const commonLlmReq = new CommonLlmReq();
+		commonLlmReq.messages = [];
+
+		// 添加系统角色消息
+		const systemMessage = new RoleEtContentImpl("system", SysPrompt);
+		commonLlmReq.messages.push(systemMessage);
+
+		// 添加用户角色消息，内容为 finalReq.toYaml()
+		const userMessage = new RoleEtContentImpl("user", finalReq.toYaml());
+		commonLlmReq.messages.push(userMessage);
+
+		return commonLlmReq;
+	}
+}
+
 // 导出单例（方便项目中直接使用，也可通过new实例化）
 export const rawReqToFinalReqConvtr = new RawReqToFinalReqConvtr();
+export const finalReqToCommonLlmReqConvtr = new FinalReqToCommonLlmReqConvtr();

@@ -11,7 +11,7 @@ import { InteractFilesGetter } from './InteractFiles';
 import { ensureFile, writeFile } from './Tools/FileUtils';
 import { RawReq } from './Model/Impl/RawReq';
 import { FinalReq } from './Model/Impl/FinalReq';
-import { RawReqToFinalReqConvtr } from './Model/Impl/RawReqToFinalReq';
+import { RawReqToFinalReqConvtr, FinalReqToCommonLlmReqConvtr } from './Model/Impl/RawReqToFinalReq';
 
 export function activate(context: vscode.ExtensionContext) {
 	let disposable1 = vscode.commands.registerCommand('manual-ai.ApplyChangesFromYaml', async () => {
@@ -90,11 +90,21 @@ export function activate(context: vscode.ExtensionContext) {
 			// 写入到 FinalReq 文件
 			await writeFile(interactFiles.FinalReq, finalReqYaml, ct);
 
-			// 写入到剪贴板
-			await vscode.env.clipboard.writeText(finalReqYaml);
+			// 转换为 CommonLlmReq
+			const commonLlmReqConverter = FinalReqToCommonLlmReqConvtr.inst;
+			const commonLlmReq = await commonLlmReqConverter.finalReqToCommonLlmReq(finalReq, ct);
+
+			// 序列化为 YAML 字符串
+			const commonLlmReqYaml = commonLlmReq.toYaml();
+
+			// 写入到 CommonLlmReq 文件
+			await writeFile(interactFiles.CommonLlmReq, commonLlmReqYaml, ct);
+
+			// 写入到剪贴板（放 CommonLlmReq 的内容）
+			await vscode.env.clipboard.writeText(commonLlmReqYaml);
 
 			// 显示成功信息
-			vscode.window.showInformationMessage('RawReq 转换成功，已写入 FinalReq 文件并复制到剪贴板');
+			vscode.window.showInformationMessage('RawReq 转换成功，已写入 FinalReq 和 CommonLlmReq 文件，CommonLlmReq 内容已复制到剪贴板');
 		} catch (error) {
 			vscode.window.showErrorMessage(`转换失败: ${(error as Error).message}`);
 		}

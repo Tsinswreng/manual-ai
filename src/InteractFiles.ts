@@ -3,6 +3,7 @@ import { BaseInteractDir } from "./BaseDir";
 export interface IInteractFiles {
 	get UserInput():string;
 	get FinalReq():string;
+	get CommonLlmReq():string;
 	get LlmResp():string;
 	get ExeOp():string
 	get Diff_Changes():string
@@ -40,6 +41,7 @@ export function mkIInteractFiles(base: string):IInteractFiles{
 	const r:IInteractFiles = {
 		UserInput: j("Io/UserInput.yaml"),
 		FinalReq: j("Io/FinalReq.yaml"),
+		CommonLlmReq: j("Io/CommonLlmReq.yaml"),
 		LlmResp: j("Io/LlmResp.yaml"),
 		/** 直接執行、不存入diff */
 		ExeOp: j("Io/ExeOp.yaml"),

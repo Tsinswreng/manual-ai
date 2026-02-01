@@ -14,15 +14,17 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-
-  ],
+  "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "manual-ai.ApplyChangesFromYaml",
         "title": "Apply changes from YAML file"
+      },
+      {
+        "command": "manual-ai.ConvertRawReqToFinalReq",
+        "title": "Convert RawReq to FinalReq"
       }
     ]
   },
@@ -46,6 +48,8 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
+    "@types/glob": "^9.0.0",
+    "glob": "^13.0.0",
     "yaml": "^2.8.2"
   }
 }

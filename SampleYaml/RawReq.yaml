@@ -1,0 +1,19 @@
+# 符合 IRawReq 接口的配置示例
+files:
+  # 對應 IFiles.paths
+  paths:
+    - "src/services/*.ts"
+    - "src/controllers/**/*"
+  
+  # 對應 IFiles.regex (IRegexs)
+  regex:
+    includes:
+      - ".*svc.*ts$"
+      - ".*ctrl.*ts$"
+    excludes:
+      - ".*spec\\.ts$"
+      - ".*test\\.ts$"
+text: |
+  請幫我分析以上代碼中的業務邏輯。
+  特別是關於用戶驗證的部分，
+  是否符合當前的安全規範？

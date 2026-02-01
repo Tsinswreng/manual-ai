@@ -8,10 +8,13 @@ import { AiResp } from './Model/Impl/AiResp';
 import { ChangeApplyer } from './ChangeApplyer';
 import { IOpWriteFile } from './Model/AiResp';
 import { InteractFilesGetter } from './InteractFiles';
-import { ensureFile } from './Tools/FileUtils';
+import { ensureFile, writeFile } from './Tools/FileUtils';
+import { RawReq } from './Model/Impl/RawReq';
+import { RawReqToFinalReq } from './Model/Impl/RawReqToFinalReq';
+import { FinalReq } from './Model/Impl/FinalReq';
 
 export function activate(context: vscode.ExtensionContext) {
-	let disposable = vscode.commands.registerCommand('manual-ai.ApplyChangesFromYaml', async () => {
+	let disposable1 = vscode.commands.registerCommand('manual-ai.ApplyChangesFromYaml', async () => {
 		// 让用户输入 YAML 文件路径
 		let filePath = await vscode.window.showInputBox({
 			placeHolder: '请输入 YAML 文件路径',
@@ -55,7 +58,46 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
-	context.subscriptions.push(disposable);
+	let disposable2 = vscode.commands.registerCommand('manual-ai.ConvertRawReqToFinalReq', async () => {
+		try {
+			// 获取当前编辑器的取消令牌
+			const ct = new vscode.CancellationTokenSource().token;
+			
+			// 获取交互文件路径
+			const interactFiles = InteractFilesGetter.inst.getInteractFiles();
+			
+			// 确保 UserInput 文件存在
+			await ensureFile(interactFiles.UserInput, ct);
+			
+			// 读取 UserInput 文件内容
+			const yamlContent = await fs.readFile(interactFiles.UserInput, 'utf8');
+			
+			// 反序列化为 RawReq 对象
+			const rawReq = new RawReq();
+			rawReq.fromYaml(yamlContent);
+
+			// 转换为 FinalReq
+			const converter = RawReqToFinalReq.inst;
+			const finalReq = await converter.convert(rawReq, ct);
+
+			// 序列化为 YAML 字符串
+			const finalReqYaml = finalReq.toYaml();
+
+			// 写入到 FinalReq 文件
+			await writeFile(interactFiles.FinalReq, finalReqYaml, ct);
+
+			// 写入到剪贴板
+			await vscode.env.clipboard.writeText(finalReqYaml);
+
+			// 显示成功信息
+			vscode.window.showInformationMessage('RawReq 转换成功，已写入 FinalReq 文件并复制到剪贴板');
+		} catch (error) {
+			vscode.window.showErrorMessage(`转换失败: ${(error as Error).message}`);
+		}
+	});
+
+	context.subscriptions.push(disposable1);
+	context.subscriptions.push(disposable2);
 }
 
 export function deactivate() {}

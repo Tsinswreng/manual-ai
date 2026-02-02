@@ -211,7 +211,8 @@ export class FinalReqToCommonLlmReqConvtr implements IFinalReqToCommonLlmReq {
 
 		// 添加系统角色消息
 		const sysPromptFilePath = InteractFilesGetter.inst.getInteractFiles().SysPrompt;
-		if(!ensureFile(sysPromptFilePath, ct)){
+		const exists = await ensureFile(sysPromptFilePath, ct);
+		if(!exists){
 			fs.writeFile(sysPromptFilePath, DfltSysPrompt, { encoding: "utf8" })
 		}
 		const sysPromptContent = await fs.readFile(sysPromptFilePath, "utf8");

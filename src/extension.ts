@@ -14,7 +14,7 @@ import { FinalReq } from './Model/Impl/FinalReq';
 import { RawReqToFinalReqConvtr, FinalReqToCommonLlmReqConvtr } from './Model/Impl/RawReqToFinalReq';
 
 function c(s:string){
-	return "manual-ai:"+s
+	return "manual-ai."+s
 }
 export const CmdNames = {
 	ExeOp: c("ExeOp"),

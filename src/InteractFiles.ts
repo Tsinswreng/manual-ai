@@ -1,6 +1,7 @@
 import Path from "path";
 import { BaseInteractDir } from "./BaseDir";
 export interface IInteractFiles {
+	get SysPrompt():string
 	get UserInput():string;
 	get FinalReq():string;
 	get CommonLlmReq():string;
@@ -39,6 +40,7 @@ export function mkIInteractFiles(base: string):IInteractFiles{
 		return Path.join(base, path);
 	}
 	const r:IInteractFiles = {
+		SysPrompt: j("Io/SysPrompt"),
 		UserInput: j("Io/UserInput.yaml"),
 		FinalReq: j("Io/FinalReq.yaml"),
 		CommonLlmReq: j("Io/CommonLlmReq.yaml"),

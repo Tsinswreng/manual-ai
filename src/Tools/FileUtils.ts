@@ -8,7 +8,7 @@ import { CT } from "../CT";
  * @param path 文件路径
  * @param ct 取消令牌
  */
-export async function ensureDir(path: string, ct: CT): Promise<boolean> {
+export async function ensureDir(path: string, ct?: CT): Promise<boolean> {
 	const dir = dirname(path);
 	const exists = existsSync(dir);
 	if (!exists) {
@@ -22,7 +22,7 @@ export async function ensureDir(path: string, ct: CT): Promise<boolean> {
  * @param path 文件路径
  * @param ct 取消令牌
  */
-export async function ensureFile(path: string, ct: CT): Promise<boolean> {
+export async function ensureFile(path: string, ct?: CT): Promise<boolean> {
 	await ensureDir(path, ct);
 	const exists = existsSync(path);
 	if (!exists) {

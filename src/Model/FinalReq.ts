@@ -32,8 +32,8 @@ export interface IFileCtx extends IFromEtToYaml{
 	issues?: string[];
 	/** 帶有行號的原始內容。行號從1始
 	 * 如
-	 * 1|	#!/bin/bash
-	 * 2|	echo "Hello, World!"
+	 * 1|#!/bin/bash
+	 * 2|echo "Hello, World!"
 	 * 
 	 * 整個文件中、文件行號的字符數要一致。
 	 * 如當文件總行數在[1,9]行間、則第一行的行號是1; 

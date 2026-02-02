@@ -15,7 +15,6 @@ export class LineNumAttacher implements ILineNumAttacher {
 		const lineNumLength = totLine.toString().length;
 		// 行号补前导零，保证长度一致（如总99行，行1则为01，行10则为10）
 		const formattedLineNum = lineNum.toString().padStart(lineNumLength, '0');
-		// 按YAML规则拼接：格式化行号 + | + 制表符 + 原始行文本
-		return `${formattedLineNum}|	${line}`;
+		return `${formattedLineNum}|${line}`;
 	}
 }

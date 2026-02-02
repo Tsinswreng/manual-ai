@@ -19,12 +19,12 @@
   "contributes": {
     "commands": [
       {
-        "command": "manual-ai.ApplyChangesFromYaml",
-        "title": "Apply changes from YAML file"
+        "command": "manual-ai.ExeOp",
+        "title": "ManualAi-ExeOp"
       },
       {
-        "command": "manual-ai.ConvertRawReqToFinalReq",
-        "title": "Convert RawReq to FinalReq"
+        "command": "manual-ai.GenReq",
+        "title": "ManualAi-GenReq"
       }
     ]
   },

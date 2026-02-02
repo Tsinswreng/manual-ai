@@ -13,12 +13,20 @@ import { RawReq } from './Model/Impl/RawReq';
 import { FinalReq } from './Model/Impl/FinalReq';
 import { RawReqToFinalReqConvtr, FinalReqToCommonLlmReqConvtr } from './Model/Impl/RawReqToFinalReq';
 
+function c(s:string){
+	return "manual-ai:"+s
+}
+export const CmdNames = {
+	ExeOp: c("ExeOp"),
+	GenReq: c("GenReq"),
+}
+
 export function activate(context: vscode.ExtensionContext) {
-	let disposable1 = vscode.commands.registerCommand('manual-ai.ApplyChangesFromYaml', async () => {
+	let disposable1 = vscode.commands.registerCommand(CmdNames.ExeOp, async () => {
 		// 让用户输入 YAML 文件路径
 		let filePath = await vscode.window.showInputBox({
-			placeHolder: '请输入 YAML 文件路径',
-			prompt: '输入要应用的 YAML 文件路径'
+			placeHolder: 'Input the path of ExeOp.yaml to apply changes',
+			prompt: 'If null, default path will be used'
 		});
 
 		// 当用户没传入文件路径时，使用默认路径
@@ -58,7 +66,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
-	let disposable2 = vscode.commands.registerCommand('manual-ai.ConvertRawReqToFinalReq', async () => {
+	let disposable2 = vscode.commands.registerCommand(CmdNames.GenReq, async () => {
 		try {
 			// 获取当前编辑器的取消令牌
 			const ct = new vscode.CancellationTokenSource().token;
@@ -104,9 +112,9 @@ export function activate(context: vscode.ExtensionContext) {
 			await vscode.env.clipboard.writeText(commonLlmReqYaml);
 
 			// 显示成功信息
-			vscode.window.showInformationMessage('RawReq 转换成功，已写入 FinalReq 和 CommonLlmReq 文件，CommonLlmReq 内容已复制到剪贴板');
+			//vscode.window.showInformationMessage('RawReq 转换成功，已写入 FinalReq 和 CommonLlmReq 文件，CommonLlmReq 内容已复制到剪贴板');
 		} catch (error) {
-			vscode.window.showErrorMessage(`转换失败: ${(error as Error).message}`);
+			vscode.window.showErrorMessage(`GenReq Failed: ${(error as Error).message}`);
 		}
 	});
 

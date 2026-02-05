@@ -1,3 +1,28 @@
+#H[2026_0205_215438][
+- 新增命令及命令更名
+- 除蠹芝帶行號ʹ文件ˋ有多餘製表符
+```json
+"commands": [
+      {
+        "command": "manual-ai.ExeOpByClipBoard",
+        "title": "ManualAi-ExeOpByClipBoard"
+      },
+      {
+        "command": "manual-ai.ExeOpByPath",
+        "title": "ManualAi-ExeOpByPath"
+      },
+      {
+        "command": "manual-ai.GenReq",
+        "title": "ManualAi-GenReq"
+      },
+      {
+        "command": "manual-ai.GenInitReq",
+        "title": "ManualAi-GenInitReq"
+      }
+    ]
+```
+]
+
 #H[2026_0202_220237][
 	- 命令更名
 	```json

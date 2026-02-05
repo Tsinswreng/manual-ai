@@ -124,8 +124,87 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
+	let disposable3 = vscode.commands.registerCommand(CmdNames.ExeOpByClipBoard, async () => {
+		try {
+			// 获取当前编辑器的取消令牌
+			const ct = new vscode.CancellationTokenSource().token;
+			
+			// 从剪贴板读取 YAML 内容
+			const yamlContent = await vscode.env.clipboard.readText();
+			
+			if (!yamlContent || yamlContent.trim() === '') {
+				vscode.window.showErrorMessage('剪贴板内容为空，无法执行操作');
+				return;
+			}
+			
+			// 反序列化为 AiResp 对象
+			const aiResp = new AiResp();
+			aiResp.fromYaml(yamlContent);
+
+			// 应用更改
+			const changeApplyer = new ChangeApplyer();
+
+			// 只处理写操作
+			const writeOperations = aiResp.operations.filter(op => op.type === 'replaceByLine' || op.type === 'replaceBySnippet') as IOpWriteFile[];
+
+			// 执行所有写操作
+			for (const operation of writeOperations) {
+				await changeApplyer.applyChange(operation, ct);
+			}
+
+			// 显示成功信息
+			vscode.window.showInformationMessage(`成功应用了 ${writeOperations.length} 个更改`);
+		} catch (error) {
+			vscode.window.showErrorMessage(`应用更改失败: ${(error as Error).message}`);
+		}
+	});
+
+	let disposable4 = vscode.commands.registerCommand(CmdNames.GenReq, async () => {
+		try {
+			// 获取当前编辑器的取消令牌
+			const ct = new vscode.CancellationTokenSource().token;
+			
+			// 获取交互文件路径
+			const interactFiles = InteractFilesGetter.inst.getInteractFiles();
+			
+			// 确保 UserInput 文件存在
+			await ensureFile(interactFiles.UserInput, ct);
+			
+			// 读取 UserInput 文件内容
+			const yamlContent = await fs.readFile(interactFiles.UserInput, 'utf8');
+			
+			if(yamlContent == void 0 || yamlContent.trim() == ''){
+				return;
+			}
+			
+			// 反序列化为 RawReq 对象
+			const rawReq = new RawReq();
+			rawReq.fromYaml(yamlContent);
+
+			// 转换为 FinalReq
+			const converter = RawReqToFinalReqConvtr.inst;
+			const finalReq = await converter.rawReqToFinalReq(rawReq, ct);
+
+			// 序列化为 YAML 字符串
+			const finalReqYaml = finalReq.toYaml();
+
+			// 写入到 FinalReq 文件
+			await writeFile(interactFiles.FinalReq, finalReqYaml, ct);
+
+			// 写入到剪贴板（放 FinalReq 的内容）
+			await vscode.env.clipboard.writeText(finalReqYaml);
+
+			// 显示成功信息
+			//vscode.window.showInformationMessage('RawReq 转换成功，已写入 FinalReq 文件，FinalReq 内容已复制到剪贴板');
+		} catch (error) {
+			vscode.window.showErrorMessage(`GenReq Failed: ${(error as Error).message}`);
+		}
+	});
+
 	context.subscriptions.push(disposable1);
 	context.subscriptions.push(disposable2);
+	context.subscriptions.push(disposable3);
+	context.subscriptions.push(disposable4);
 }
 
 export function deactivate() {}

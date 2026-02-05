@@ -17,12 +17,18 @@ function c(s:string){
 	return "manual-ai."+s
 }
 export const CmdNames = {
-	ExeOp: c("ExeOp"),
+	/** 按路徑執行操作。若不傳路徑則用默認路徑 */
+	ExeOpByPath: c("ExeOpByPath"),
+	/** 讀貼板內容執行操作 */
+	ExeOpByClipBoard: c("ExeOpByClipBoard"),
+	/** 產生初始請求(FinalReq 和 CommonLlmReq)、最終剪貼板內容爲 CommonLlmReq */
+	GenInitReq: c("GenInitReq"),
+	/** 產生請求(FinalReq)、最終剪貼板內容爲 FinalReq*/
 	GenReq: c("GenReq"),
 }
 
 export function activate(context: vscode.ExtensionContext) {
-	let disposable1 = vscode.commands.registerCommand(CmdNames.ExeOp, async () => {
+	let disposable1 = vscode.commands.registerCommand(CmdNames.ExeOpByPath, async () => {
 		// 让用户输入 YAML 文件路径
 		let filePath = await vscode.window.showInputBox({
 			placeHolder: 'Input the path of ExeOp.yaml to apply changes',
@@ -66,7 +72,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
-	let disposable2 = vscode.commands.registerCommand(CmdNames.GenReq, async () => {
+	let disposable2 = vscode.commands.registerCommand(CmdNames.GenInitReq, async () => {
 		try {
 			// 获取当前编辑器的取消令牌
 			const ct = new vscode.CancellationTokenSource().token;

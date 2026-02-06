@@ -1,4 +1,4 @@
-
+#import "TypstTools/AutoHeading.typ": H
 In User home Dir:
 ```
 .ManualAi/

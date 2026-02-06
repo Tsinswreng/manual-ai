@@ -93,7 +93,7 @@ text:
 
 All path must be absolute and use forward slashes (/) as the path separator.
 
-Remove all comments from your final output, except for \`#~xxx\` in the end of each block
+Remove all comments from your final output
 
 #H[YAML Multi-line Block Scalar Syntax Rules][
   \`\`\`yaml

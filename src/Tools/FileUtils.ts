@@ -48,7 +48,7 @@ export async function readFile(path: string, ct: CT): Promise<string> {
  * @param content 文件内容
  * @param ct 取消令牌
  */
-export async function writeFile(path: string, content: string, ct: CT): Promise<void> {
+export async function writeEnsuredFile(path: string, content: string, ct: CT): Promise<void> {
 	await ensureDir(path, ct);
 	await fs.writeFile(path, content, 'utf8');
 }

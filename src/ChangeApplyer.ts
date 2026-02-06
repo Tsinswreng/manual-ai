@@ -1,5 +1,5 @@
 import { IOpWriteFile, IOpReplaceByLine, IOpReplaceBySnippet, EOperateType } from "./Model/AiResp";
-import { readFile, writeFile, ensureDir } from "./Tools/FileUtils";
+import { readFile, writeEnsuredFile, ensureDir } from "./Tools/FileUtils";
 import { CT } from "./CT";
 import { YamlBlock } from "./Model/IYamlBlock";
 
@@ -70,7 +70,7 @@ export class ChangeApplyer implements IChangeApplyer {
 		const newContent = lines.join('\n');
 
 		// 写入文件
-		await writeFile(change.path, newContent, ct);
+		await writeEnsuredFile(change.path, newContent, ct);
 
 		return {
 			path: change.path,
@@ -109,7 +109,7 @@ export class ChangeApplyer implements IChangeApplyer {
 		}
 
 		// 写入文件
-		await writeFile(change.path, newContent, ct);
+		await writeEnsuredFile(change.path, newContent, ct);
 
 		return {
 			path: change.path,

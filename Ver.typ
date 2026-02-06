@@ -1,3 +1,16 @@
+#H[2026_0206_142405][
+- GenReq等皆從剪貼板
+- 命令更名 `ExeOpByClipBoard` -> `ExeOp`
+- 改默認提示詞
+	```
+	Remove all comments from your final output, except for `#~xxx` in the end of each block
+	```
+	->
+	```
+	Remove all comments from your final output
+	```
+]
+
 #H[2026_0205_215438][
 - 新增命令及命令更名
 - 除蠹芝帶行號ʹ文件ˋ有多餘製表符

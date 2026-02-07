@@ -62,7 +62,7 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 		try {
 			// 步骤1：解析并过滤出最终需要处理的文件路径
 			let targetFilePaths = await this.resolveFilePaths(rawReq.files);
-			targetFilePaths = targetFilePaths.map(x=>UnixPathNormalizer.inst.normalizePath(x));
+			targetFilePaths = targetFilePaths.map(x => UnixPathNormalizer.inst.normalizePath(x));
 			if (targetFilePaths.length === 0) {
 				return finalReq;
 			}
@@ -96,16 +96,19 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 
 		// 1. 解析glob通配符，获取初始文件列表
 		let fileList: string[] = [];
-			for (const path of paths) {
-				const normalizedPath = UnixPathNormalizer.inst.normalizePath(path);
-				let matched = await glob(normalizedPath, { nodir: true }); // 只匹配文件，排除目录
-			
-			matched = matched.map(x=>UnixPathNormalizer.inst.normalizePath(x));
+		for (const path of paths) {
+			const normalizedPath = UnixPathNormalizer.inst.normalizePath(path);
+			let matched = await glob(normalizedPath, { nodir: true }); // 只匹配文件，排除目录
+
+			matched = matched.map(x => UnixPathNormalizer.inst.normalizePath(x));
 			fileList = fileList.concat(matched);
 		}
 
 		// 2. 应用正则过滤（includes->保留，excludes->排除）
-		fileList = this.filterByRegex(fileList, includes, excludes);
+		if (files.regex != null) {
+			fileList = this.filterByRegex(fileList, files.regex.includes, files.regex.excludes);
+		}
+
 
 		// 3. 路径去重，避免重复处理同一文件
 		return [...new Set(fileList)];
@@ -116,24 +119,28 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 	 * @param fileList 待过滤的文件路径列表
 	 * @param includes 包含正则（空则不过滤，全部保留）
 	 * @param excludes 排除正则（空则不排除）
-	 * @returns 过滤后的文件列表
 	 */
 	private filterByRegex(
 		fileList: string[],
 		includes?: string[],
 		excludes?: string[]
 	): string[] {
-		// 处理包含正则：只有匹配任意一个includes的文件才保留
-		if (includes && includes.length > 0) {
-			const includeRegexs = includes.map(p => new RegExp(p, "i")); // 忽略大小写，适配不同系统路径
+		// 过滤includes：移除null/空字符串元素，null则不处理
+		const validIncludes = includes?.filter(item => item != null && item.trim() !== '') ?? [];
+		// 过滤excludes：移除null/空字符串元素，null则不处理
+		const validExcludes = excludes?.filter(item => item != null && item.trim() !== '') ?? [];
+
+		// 处理包含正则：只有匹配任意一个有效includes的文件才保留（validIncludes非空时才处理）
+		if (validIncludes.length > 0) {
+			const includeRegexs = validIncludes.map(p => new RegExp(p, "i")); // 忽略大小写，适配不同系统路径
 			fileList = fileList.filter(filePath =>
 				includeRegexs.some(re => re.test(filePath))
 			);
 		}
 
-		// 处理排除正则：匹配任意一个excludes的文件直接排除
-		if (excludes && excludes.length > 0) {
-			const excludeRegexs = excludes.map(p => new RegExp(p, "i"));
+		// 处理排除正则：匹配任意一个有效excludes的文件直接排除（validExcludes非空时才处理）
+		if (validExcludes.length > 0) {
+			const excludeRegexs = validExcludes.map(p => new RegExp(p, "i"));
 			fileList = fileList.filter(filePath =>
 				!excludeRegexs.some(re => re.test(filePath))
 			);
@@ -141,6 +148,7 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 
 		return fileList;
 	}
+
 
 	private async buildFileCtxList(
 		filePaths: string[],
@@ -214,7 +222,7 @@ export class FinalReqToCommonLlmReqConvtr implements IFinalReqToCommonLlmReq {
 		// 添加系统角色消息
 		const sysPromptFilePath = InteractFilesGetter.inst.getInteractFiles().SysPrompt;
 		const exists = await ensureFile(sysPromptFilePath, ct);
-		if(!exists){
+		if (!exists) {
 			fs.writeFile(sysPromptFilePath, DfltSysPrompt, { encoding: "utf8" })
 		}
 		const sysPromptContent = await fs.readFile(sysPromptFilePath, "utf8");

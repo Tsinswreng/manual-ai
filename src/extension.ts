@@ -25,16 +25,9 @@ export const CmdNames = {
 
 export function activate(context: vscode.ExtensionContext) {
 	let disposable1 = vscode.commands.registerCommand(CmdNames.ExeOpByPath, cmdExeOpByPath);
-	
-
 	let disposable2 = vscode.commands.registerCommand(CmdNames.MkInitReq, cmdMkInitReq);
-	
-
 	let disposable3 = vscode.commands.registerCommand(CmdNames.ExeOp, cmdExeOp);
-	
-
 	let disposable4 = vscode.commands.registerCommand(CmdNames.MkReq, cmdMkReq);
-	
 	let disposable5 = vscode.commands.registerCommand(CmdNames.MkReqTemplate, cmdMkReqTemplate);
 	
 	context.subscriptions.push(disposable1);

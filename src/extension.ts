@@ -5,7 +5,7 @@ vsce package
 import * as vscode from 'vscode';
 import { cmdExeOpByPath } from './CmdImpl/ExeOpByPath';
 import { cmdExeOp } from './CmdImpl/ExeOp';
-import { cmdMkInitReq } from './CmdImpl/GenInitReq';
+import { cmdMkInitReq } from './CmdImpl/MkInitReq';
 import { cmdMkReqTemplate } from './CmdImpl/MkReqTemplate';
 import { cmdMkReq } from './CmdImpl/GenReq';
 function c(s:string){

@@ -7,7 +7,7 @@ import { cmdExeOpByPath } from './CmdImpl/ExeOpByPath';
 import { cmdExeOp } from './CmdImpl/ExeOp';
 import { cmdMkInitReq } from './CmdImpl/MkInitReq';
 import { cmdMkReqTemplate } from './CmdImpl/MkReqTemplate';
-import { cmdMkReq } from './CmdImpl/GenReq';
+import { cmdMkReq } from './CmdImpl/MkReq';
 function c(s:string){
 	return "manual-ai."+s
 }

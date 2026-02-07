@@ -3,10 +3,11 @@ vsce package
 */
 //TODO GenReq旹 彈窗㕥指定路徑、不輸則用默認路徑
 import * as vscode from 'vscode';
-import { exeOpByPathCommand } from './CmdImpl/ExeOpByPath';
-import { exeOpCommand } from './CmdImpl/ExeOp';
-import { genInitReqCommand } from './CmdImpl/GenInitReq';
-import { genReqCommand } from './CmdImpl/GenReq';
+import { cmdExeOpByPath } from './CmdImpl/ExeOpByPath';
+import { cmdExeOp } from './CmdImpl/ExeOp';
+import { cmdMkInitReq } from './CmdImpl/GenInitReq';
+import { cmdMkReqTemplate } from './CmdImpl/MkReqTemplate';
+import { cmdMkReq } from './CmdImpl/GenReq';
 function c(s:string){
 	return "manual-ai."+s
 }
@@ -23,22 +24,25 @@ export const CmdNames = {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-	let disposable1 = vscode.commands.registerCommand(CmdNames.ExeOpByPath, exeOpByPathCommand);
+	let disposable1 = vscode.commands.registerCommand(CmdNames.ExeOpByPath, cmdExeOpByPath);
 	
 
-	let disposable2 = vscode.commands.registerCommand(CmdNames.MkInitReq, genInitReqCommand);
+	let disposable2 = vscode.commands.registerCommand(CmdNames.MkInitReq, cmdMkInitReq);
 	
 
-	let disposable3 = vscode.commands.registerCommand(CmdNames.ExeOp, exeOpCommand);
+	let disposable3 = vscode.commands.registerCommand(CmdNames.ExeOp, cmdExeOp);
 	
 
-	let disposable4 = vscode.commands.registerCommand(CmdNames.MkReq, genReqCommand);
+	let disposable4 = vscode.commands.registerCommand(CmdNames.MkReq, cmdMkReq);
 	
-
+	let disposable5 = vscode.commands.registerCommand(CmdNames.MkReqTemplate, cmdMkReqTemplate);
+	
 	context.subscriptions.push(disposable1);
 	context.subscriptions.push(disposable2);
 	context.subscriptions.push(disposable3);
 	context.subscriptions.push(disposable4);
+	context.subscriptions.push(disposable5);
+	
 }
 
 export function deactivate() {}

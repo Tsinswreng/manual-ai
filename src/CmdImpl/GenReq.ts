@@ -4,7 +4,7 @@ import { RawReqToFinalReqConvtr } from '../Model/Impl/RawReqToFinalReq';
 import { InteractFilesGetter } from '../InteractFiles';
 import { writeEnsuredFile } from '../Tools/FileUtils';
 
-export const genReqCommand = async () => {
+export const cmdMkReq = async () => {
 	try {
 		// 获取当前编辑器的取消令牌
 		const ct = new vscode.CancellationTokenSource().token;

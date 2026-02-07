@@ -56,11 +56,11 @@ export class RawReq extends BaseYaml implements IRawReq {
 	}
 	static mkTemplate(){
 		const r = new this();
-		r.files.paths = [];
+		r.files.paths = [""];
 		r.files.regex = new Regexs();
-		r.files.regex.includes = []
-		r.files.regex.excludes = []
-		r.text = ""
+		r.files.regex.includes = [""]
+		r.files.regex.excludes = [""]
+		r.text = "\n"
 		return r
 	}
 	static mkTemplateStr(){

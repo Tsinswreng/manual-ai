@@ -6,7 +6,7 @@ import { IOpWriteFile } from '../Model/AiResp';
 import { InteractFilesGetter } from '../InteractFiles';
 import { ensureFile } from '../Tools/FileUtils';
 
-export const exeOpByPathCommand = async () => {
+export const cmdExeOpByPath = async () => {
 	// 让用户输入 YAML 文件路径
 	let filePath = await vscode.window.showInputBox({
 		placeHolder: 'Input the path of ExeOp.yaml to apply changes',

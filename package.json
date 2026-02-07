@@ -27,12 +27,16 @@
         "title": "ManualAi-ExeOpByPath"
       },
       {
-        "command": "manual-ai.GenReq",
-        "title": "ManualAi-GenReq"
+        "command": "manual-ai.MkReq",
+        "title": "ManualAi-MkReq"
       },
       {
-        "command": "manual-ai.GenInitReq",
-        "title": "ManualAi-GenInitReq"
+        "command": "manual-ai.MkReqTemplate",
+        "title": "ManualAi-MkReqTemplate"
+      },
+      {
+        "command": "manual-ai.MkInitReq",
+        "title": "ManualAi-MkInitReq"
       }
     ]
   },

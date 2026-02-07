@@ -3,15 +3,6 @@ vsce package
 */
 //TODO GenReq旹 彈窗㕥指定路徑、不輸則用默認路徑
 import * as vscode from 'vscode';
-import { promises as fs } from 'fs';
-import { AiResp } from './Model/Impl/AiResp';
-import { ChangeApplyer } from './ChangeApplyer';
-import { IOpWriteFile } from './Model/AiResp';
-import { InteractFilesGetter } from './InteractFiles';
-import { ensureFile, writeEnsuredFile } from './Tools/FileUtils';
-import { RawReq } from './Model/Impl/RawReq';
-import { FinalReq } from './Model/Impl/FinalReq';
-import { RawReqToFinalReqConvtr, FinalReqToCommonLlmReqConvtr } from './Model/Impl/RawReqToFinalReq';
 import { exeOpByPathCommand } from './CmdImpl/ExeOpByPath';
 import { exeOpCommand } from './CmdImpl/ExeOp';
 import { genInitReqCommand } from './CmdImpl/GenInitReq';
@@ -25,22 +16,23 @@ export const CmdNames = {
 	/** 讀貼板內容執行操作 */
 	ExeOp: c("ExeOp"),
 	/** 產生初始請求(FinalReq 和 CommonLlmReq)、最終剪貼板內容爲 CommonLlmReq */
-	GenInitReq: c("GenInitReq"),
+	MkInitReq: c("MkInitReq"),
 	/** 產生請求(FinalReq)、最終剪貼板內容爲 FinalReq*/
-	GenReq: c("GenReq"),
+	MkReq: c("MkReq"),
+	MkReqTemplate: c("MkReqTemplate"),
 }
 
 export function activate(context: vscode.ExtensionContext) {
 	let disposable1 = vscode.commands.registerCommand(CmdNames.ExeOpByPath, exeOpByPathCommand);
 	
 
-	let disposable2 = vscode.commands.registerCommand(CmdNames.GenInitReq, genInitReqCommand);
+	let disposable2 = vscode.commands.registerCommand(CmdNames.MkInitReq, genInitReqCommand);
 	
 
 	let disposable3 = vscode.commands.registerCommand(CmdNames.ExeOp, exeOpCommand);
 	
 
-	let disposable4 = vscode.commands.registerCommand(CmdNames.GenReq, genReqCommand);
+	let disposable4 = vscode.commands.registerCommand(CmdNames.MkReq, genReqCommand);
 	
 
 	context.subscriptions.push(disposable1);

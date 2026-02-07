@@ -69,11 +69,18 @@ export class YamlBlock implements IYamlBlock, IYamlBlockParser {
 			return void 0
 		}
 
-		// 兼容所有换行符（\n/\r\n），分割为行数组
-		const contentLines = content.split(/\r?\n/);
-		// 逐行添加基础缩进，保留原始行结构（包括空行）
-		const indentedLines = contentLines.map(line => baseIndent + line);
-		// 重组为字符串，使用通用换行符\n
-		return indentedLines.join('\n');
+	// 兼容所有换行符（\n/\r\n），分割为行数组
+	let contentLines = content.split(/\r?\n/);
+	
+	// 移除因末尾换行符产生的最后一个空行（避免多生成空行）
+	if (contentLines.length > 0 && contentLines[contentLines.length - 1] === '') {
+		contentLines.pop();
+	}
+	
+	// 逐行添加基础缩进，保留原始行结构（包括空行）
+	const indentedLines = contentLines.map(line => baseIndent + line);
+	// 重组为字符串，使用通用换行符\n
+	return indentedLines.join('\n');
+	
 	}
 }

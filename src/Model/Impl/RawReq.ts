@@ -54,6 +54,18 @@ export class RawReq extends BaseYaml implements IRawReq {
 		if (files !== undefined) this.files = files;
 		if (text !== undefined) this.text = text;
 	}
+	static mkTemplate(){
+		const r = new this();
+		r.files.paths = [];
+		r.files.regex = new Regexs();
+		r.files.regex.includes = []
+		r.files.regex.excludes = []
+		r.text = ""
+		return r
+	}
+	static mkTemplateStr(){
+		return this.mkTemplate().toYaml()
+	}
 }
 
 

@@ -96,8 +96,10 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 
 		// 1. 解析glob通配符，获取初始文件列表
 		let fileList: string[] = [];
-		for (const path of paths) {
-			let matched = await glob(path, { nodir: true }); // 只匹配文件，排除目录
+			for (const path of paths) {
+				const normalizedPath = UnixPathNormalizer.inst.normalizePath(path);
+				let matched = await glob(normalizedPath, { nodir: true }); // 只匹配文件，排除目录
+			
 			matched = matched.map(x=>UnixPathNormalizer.inst.normalizePath(x));
 			fileList = fileList.concat(matched);
 		}

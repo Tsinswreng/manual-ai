@@ -1,94 +1,42 @@
-# ❌ 错误：解析器会把开头的---当作YAML文档分隔符
-wrong_block: |
-  ---
-  ---
-  这是一段以---开头的文本，解析器会报错
+
+operations:
+  # Line-based replacement (for initial edits)
+  - type: replaceByLine
+    # if path does not exist, it will be created. if you want to create new file, just set path to the new file name and set both startLine and endLine to 1.
+    path: e:/code/src/components/Button.tsx
+    replace:
+      - startLine: 15       # starts from 1, included, can be larger than file length
+        endLine: 23         # included, can be larger than file length
+        data:
+          baseIndent: "    " # base indent for the content, which means each line will have another "    " at the beginning
+          # content can be null, which means to delete from startLine to endLine
+          content: |+
+            const handleClick = () => {
+                console.log("clicked");
+                setState(prev => !prev);
+            };
+          #~content
+        #~data
+      #~-
+
+---
+# 1. 顶层锚点：所有替换内容抽离到最外层，全局可引用
+buttonClickLogic: &buttonClickLogic |+
+  const handleClick = () => {
+    console.log("clicked");
+    setState(prev => !prev);
+  };
 
 
 
-# type: replaces
-# data: [
-#   {
-#     type: replace,
-#     start: 1,
-#     end: 3,
-#     data: |
-#       d
-#   }
-# ]
-
-# AIʹ答
-operations: 
-  - type: replace
-    path: e:\_code\ManualAi\manual-ai\test.yaml
-    startLine: 1
-    endLine: 3
-    data: |
-      ddd
-    #~data
-  - type: replace
-    path: e:\_code\ManualAi\manual-ai\test.yaml
-    startLine: 5
-    endLine: 7
-    data: |
-      eee
-    #~data
-  - type: readFiles
-    paths: 
-      - e:\_code\ManualAi\manual-ai\test.yaml
-      - e:\_code\ManualAi\manual-ai\test2.yaml
-    #~paths
-  - type: seekDef
-    path: e:\_code\ManualAi\manual-ai\test.yaml
-    lineNum: 
-    symbol: OpenRouterHandler
-  #-
-#~operations
-
-# 人撰ʹ命令 㕥 發予AI
-send:
-  - type: paths
-    paths: 
-      - e:\_code\ManualAi\manual-ai\test.yaml
-      - e:\_code\ManualAi\manual-ai\test2.yaml
-    #~paths
-  - type: regex
-    includes: 
-      - ".*svc.*ts$"
-    excludes: 
-      - bin/
-      - node_modules/
-  #~-
-#~send
-
-#據 人撰ʹ命令所生成
-
-files:
-  - path: evals/diff-edits/ClineWrapper.ts
-    issues: 
-      - |
-        [{
-          "resource": "/E:/_code/_clone/cline/evals/diff-edits/ClineWrapper.ts",
-          "owner": "typescript",
-          "code": "2307",
-          "severity": 8,
-          "message": "找不到模块“../../src/api/providers/openrouter”或其相应的类型声明。",
-          "source": "ts",
-          "startLineNumber": 1,
-          "startColumn": 35,
-          "endLineNumber": 1,
-          "endColumn": 71,
-          "modelVersionId": 1,
-          "origin": "extHost1"
-        }]
-      #~|
-    #~issues
-    contentWithLineNum: |
-      1: import { OpenRouterHandler } from "../../src/api/providers/openrouter"
-      2: import { OpenAiNativeHandler } from "../../src/api/providers/openai-native"
-      3: import { Anthropic } from "@anthropic-ai/sdk"
-      4: 
-    #~contentWithLineNum
-  #~-
-#~files
+# 2. 核心操作配置（引用顶层锚点）
+operations:
+  - type: replaceByLine
+    path: e:/code/src/components/Button.tsx
+    replace:
+      - startLine: 15       # 起始行（从1开始）
+        endLine: 23         # 结束行
+        data:
+          baseIndent: "    " # 统一添加的外层缩进
+          content: *buttonClickLogic # 引用顶层锚点
 

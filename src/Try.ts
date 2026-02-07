@@ -1,8 +1,9 @@
 import { stringify, Scalar, Document, parse } from 'yaml'
 import * as fs from 'fs'
 import { LineNumAttacher } from './Tools/ILineNumAttacher'
+import { inspect } from 'util'
 
-//trySerial2()
+tryParse6()
 
 /* 
 arr:
@@ -161,6 +162,50 @@ f: aaa
 `
 	const doc = parse(yaml)
 	console.log(doc)
+}
+
+
+function tryParse6(){
+	const yaml = 
+`
+content1: &content1 |+
+  const handleClick = () => {
+      console.log("clicked");
+      setState(prev => !prev);
+  };
+
+content2: &content2 |+
+  import { useState } from 'react';
+
+  # Array of operation objects (can be empty). Include only the operations you need.
+operations:
+  # Line-based replacement (for initial edits)
+  - type: replaceByLine
+    # if path does not exist, it will be created. if you want to create new file, just set path to the new file name and set both startLine and endLine to 1.
+    path: e:/code/src/components/Button.tsx
+    replace:
+      - startLine: 15       # starts from 1, included, can be larger than file length
+        endLine: 23         # included, can be larger than file length
+        data:
+          baseIndent: "    " # base indent for the content, which means each line will have another "    " at the beginning
+          # content can be null, which means to delete from startLine to endLine
+          content: *content1
+          #~content
+        #~data
+      #~-
+      - startLine: 45
+        endLine: 45
+        data: 
+          baseIndent: "" # this means no baseIndent
+          content: *content2
+          #~content
+        #~data
+      #~-
+    #~replace
+
+`
+	const doc = parse(yaml)
+	console.log(inspect(doc, true, 20, true))
 }
 
 

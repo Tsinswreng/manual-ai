@@ -7,7 +7,7 @@ abstract class BaseYaml implements IFromEtToYaml {
 	toYaml(o?: any): string {
 		const target = o || this;
 		const doc = new Document(target);
-return yamlDocToStr(doc);
+		return yamlDocToStr(doc);
 	}
 
 	fromYaml(yaml: string, o?: any): void {
@@ -18,6 +18,20 @@ return yamlDocToStr(doc);
 }
 
 
+// 正则匹配配置实现
+export class RegexMatch extends BaseYaml implements IRegexMatch {
+	rootDir: string = "";
+	includes: string[] = [];
+	excludes: string[] = [];
+
+	constructor(rootDir?: string, includes?: string[], excludes?: string[]) {
+		super();
+		if (arguments.length === 0) { return; }
+		if (rootDir !== undefined) this.rootDir = rootDir;
+		if (includes !== undefined) this.includes = includes;
+		if (excludes !== undefined) this.excludes = excludes;
+	}
+}
 // 文件配置实现
 export class Files extends BaseYaml implements IFiles {
 	paths: string[] = [];
@@ -42,18 +56,15 @@ export class RawReq extends BaseYaml implements IRawReq {
 		if (files !== undefined) this.files = files;
 		if (text !== undefined) this.text = text;
 	}
-	static mkTemplate(){
+	static mkTemplate() {
 		const r = new this();
-	r.files.paths = [""];
-	r.files.regex = [{
-		rootDir: "",
-		includes: [""],
-		excludes: [""]
-	}];
+		r.files.paths = [""];
+		r.files.regex = [new RegexMatch("", [""], [""])];
+
 		r.text = "\n"
 		return r
 	}
-	static mkTemplateStr(){
+	static mkTemplateStr() {
 		return this.mkTemplate().toYaml()
 	}
 }

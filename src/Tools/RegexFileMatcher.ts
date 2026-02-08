@@ -22,8 +22,8 @@ export async function regexMatchFiles(
 	const normalizedRootDir = UnixPathNormalizer.inst.normalizePath(rootDir);
 
 	// 过滤掉undefined的正则表达式，只保留有效的RegExp实例
-	const validIncludes = includes?.filter((reg): reg is RegExp => reg !== undefined) ?? [];
-	const validExcludes = excludes?.filter((reg): reg is RegExp => reg !== undefined) ?? [];
+	const validIncludes = includes?.filter((reg): reg is RegExp => reg != void 0) ?? [];
+	const validExcludes = excludes?.filter((reg): reg is RegExp => reg != void 0) ?? [];
 
 	// 递归遍历目录，匹配符合条件的文件
 	async function traverseDirectory(currentDir: string): Promise<string[]> {

@@ -1,4 +1,3 @@
-//CsOpencc t2s README-zh-Hant.typ README-zh-Hans.typ
 #import "TypstTools/AutoHeading.typ": H
 
 #let I(..args) = [

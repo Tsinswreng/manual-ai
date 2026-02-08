@@ -80,7 +80,8 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 			// 步骤4：赋值到最终请求
 			finalReq.files = fileCtxList
 		} catch (error) {
-			console.warn("[RawReqToFinalReq] 文件处理警告：", (error as Error).message);
+			//console.warn("[RawReqToFinalReq] Error", error);
+			throw error;
 		}
 
 		return finalReq;
@@ -109,8 +110,8 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 			// 遍历每个正则匹配规则，获取匹配的文件
 			for (const regexItem of files.regex) {
 				// 将字符串类型的正则表达式转换为RegExp实例（兼容空数组）
-				const includes = (regexItem.includes ?? []).map(pattern => new RegExp(pattern));
-				const excludes = (regexItem.excludes ?? []).map(pattern => new RegExp(pattern));
+				const includes = (regexItem.includes ?? []).filter(pattern => pattern != void 0 && pattern !== '').map(pattern => new RegExp(pattern));
+				const excludes = (regexItem.excludes ?? []).filter(pattern => pattern != void 0 && pattern !== '').map(pattern => new RegExp(pattern));
 				// 调用正则匹配文件工具函数，传入根目录、包含/排除规则和上下文
 				const regexMatchedFiles = await regexMatchFiles(
 					regexItem.rootDir,

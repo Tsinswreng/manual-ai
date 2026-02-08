@@ -14,6 +14,7 @@ import * as vscode from 'vscode';
 import { UnixPathNormalizer } from "../../Tools/UnixPathNormalizer";
 import { ensureFile } from "../../Tools/FileUtils";
 import { InteractFilesGetter } from "../../InteractFiles";
+import { regexMatchFiles } from "../../Tools/RegexFileMatcher";
 
 export interface IRawReqToFinalReqConvtr {
 	rawReqToFinalReq(rawReq: IRawReq, ct?: CT): Promise<IFinalReq>;
@@ -91,7 +92,7 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 	 * @returns 去重后的目标文件绝对/相对路径数组
 	 */
 	private async resolveFilePaths(files: IFiles): Promise<string[]> {
-		const { paths = []} = files;
+		const { paths = [] } = files;
 
 		// 1. 解析glob通配符，获取初始文件列表
 		let fileList: string[] = [];
@@ -105,8 +106,23 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 
 		// 2. 应用正则过滤（includes->保留，excludes->排除）
 		if (files.regex != void 0) {
-			//TODO
+			// 遍历每个正则匹配规则，获取匹配的文件
+			for (const regexItem of files.regex) {
+				// 将字符串类型的正则表达式转换为RegExp实例（兼容空数组）
+				const includes = (regexItem.includes ?? []).map(pattern => new RegExp(pattern));
+				const excludes = (regexItem.excludes ?? []).map(pattern => new RegExp(pattern));
+				// 调用正则匹配文件工具函数，传入根目录、包含/排除规则和上下文
+				const regexMatchedFiles = await regexMatchFiles(
+					regexItem.rootDir,
+					includes,
+					excludes,
+				);
+				// 规范化路径格式并合并到文件列表
+				const normalizedRegexFiles = regexMatchedFiles.map(x => UnixPathNormalizer.inst.normalizePath(x));
+				fileList = fileList.concat(normalizedRegexFiles);
+			}
 		}
+
 
 
 		// 3. 路径去重，避免重复处理同一文件

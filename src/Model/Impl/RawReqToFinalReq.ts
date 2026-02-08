@@ -109,6 +109,10 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 		if (files.regex != void 0) {
 			// 遍历每个正则匹配规则，获取匹配的文件
 			for (const regexItem of files.regex) {
+				// 跳过 rootDir 为空的正则项目，避免 ENOENT 错误
+				if (!regexItem.rootDir || regexItem.rootDir.trim() === '') {
+					continue;
+				}
 				// 将字符串类型的正则表达式转换为RegExp实例（兼容空数组）
 				const includes = (regexItem.includes ?? []).filter(pattern => pattern != void 0 && pattern !== '').map(pattern => new RegExp(pattern));
 				const excludes = (regexItem.excludes ?? []).filter(pattern => pattern != void 0 && pattern !== '').map(pattern => new RegExp(pattern));

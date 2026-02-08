@@ -10,8 +10,10 @@ export interface IRegexsObslt{
 }
 
 export interface IRegexMatch{
-	/** 查找操作所在的根目錄 */
-	rootDir: string
+	/** 查找操作所在的根目錄
+	 * 若爲空或空字串則跳過此組正則表達式匹配
+	 */
+	rootDir?: string
 	/** 包含的文件 */
 	includes: string[]
 	/** 排除的文件 */

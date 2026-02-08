@@ -1,4 +1,9 @@
 //git log -p origin/master..master > log
+
+#H[2026_0208_152951][
+- 跳過rootDir爲空字串者
+]
+
 #H[2026_0208_132344][
 - v0.0.5
 改RawReq結構、除蠹芝regex理則ʹ謬

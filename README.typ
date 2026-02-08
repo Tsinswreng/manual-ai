@@ -7,6 +7,10 @@
   }
 ]
 
+#link("README-zh-Hant")[漢]
+#link("README-zh-Hans")[汉]
+
+
 Manual-AI is a VSCode extension. Through structured YAML data interaction, users can utilize AI LLMs on web pages, integrating the LLMs with the editor to perform operations such as code modification, achieving a programming experience similar to an AI Agent.
 #H[Extension Overview][
   Most existing VSCode-integrated AI programming solutions (using plug-in-built models or self-configured third-party API keys) require payment; while web-based AI often offers free interaction but lacks structured interaction capabilities with the VSCode editor. This plug-in fills this gap, allowing users to achieve an AI Agent-like programming experience for free with web-based AI.

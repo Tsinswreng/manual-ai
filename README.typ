@@ -7,8 +7,8 @@
   }
 ]
 
-#link("README-zh-Hant")[漢]
-#link("README-zh-Hans")[汉]
+#link("README-zh-Hant.md")[漢]
+#link("README-zh-Hans.md")[汉]
 
 
 Manual-AI is a VSCode extension. Through structured YAML data interaction, users can utilize AI LLMs on web pages, integrating the LLMs with the editor to perform operations such as code modification, achieving a programming experience similar to an AI Agent.

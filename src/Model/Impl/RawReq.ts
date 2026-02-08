@@ -33,7 +33,7 @@ export class Regexs extends BaseYaml implements IRegexsObslt {
 // 文件配置实现
 export class Files extends BaseYaml implements IFiles {
 	paths: string[] = [];
-	regexObslt: IRegexsObslt = new Regexs();
+	
 
 	constructor(paths?: string[], regex?: IRegexsObslt) {
 		super();

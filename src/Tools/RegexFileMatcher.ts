@@ -1,3 +1,4 @@
+import { CT } from "../CT";
 import type { NullableList } from "../NullableList";
 import { UnixPathNormalizer } from "./UnixPathNormalizer";
 import fs from 'fs/promises';
@@ -13,6 +14,7 @@ export async function regexMatchFiles(
 	rootDir: string
 	, includes?: NullableList<RegExp>
 	, excludes?: NullableList<RegExp>
+	,ct?:CT
 ) {
 
 

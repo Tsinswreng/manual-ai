@@ -91,7 +91,7 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 	 * @returns 去重后的目标文件绝对/相对路径数组
 	 */
 	private async resolveFilePaths(files: IFiles): Promise<string[]> {
-		const { paths = [], regexObslt: regex = {} } = files;
+		const { paths = []} = files;
 
 		// 1. 解析glob通配符，获取初始文件列表
 		let fileList: string[] = [];
@@ -104,50 +104,14 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 		}
 
 		// 2. 应用正则过滤（includes->保留，excludes->排除）
-		if (files.regexObslt != null) {
-			fileList = this.filterByRegex(fileList, files.regexObslt.includes, files.regexObslt.excludes);
+		if (files.regex != void 0) {
+			//TODO
 		}
 
 
 		// 3. 路径去重，避免重复处理同一文件
 		return [...new Set(fileList)];
 	}
-
-	/**
-	 * 正则过滤文件路径
-	 * @param fileList 待过滤的文件路径列表
-	 * @param includes 包含正则（空则不过滤，全部保留）
-	 * @param excludes 排除正则（空则不排除）
-	 */
-	private filterByRegex(
-		fileList: string[],
-		includes?: string[],
-		excludes?: string[]
-	): string[] {
-		// 过滤includes：移除null/空字符串元素，null则不处理
-		const validIncludes = includes?.filter(item => item != null && item.trim() !== '') ?? [];
-		// 过滤excludes：移除null/空字符串元素，null则不处理
-		const validExcludes = excludes?.filter(item => item != null && item.trim() !== '') ?? [];
-
-		// 处理包含正则：只有匹配任意一个有效includes的文件才保留（validIncludes非空时才处理）
-		if (validIncludes.length > 0) {
-			const includeRegexs = validIncludes.map(p => new RegExp(p, "i")); // 忽略大小写，适配不同系统路径
-			fileList = fileList.filter(filePath =>
-				includeRegexs.some(re => re.test(filePath))
-			);
-		}
-
-		// 处理排除正则：匹配任意一个有效excludes的文件直接排除（validExcludes非空时才处理）
-		if (validExcludes.length > 0) {
-			const excludeRegexs = validExcludes.map(p => new RegExp(p, "i"));
-			fileList = fileList.filter(filePath =>
-				!excludeRegexs.some(re => re.test(filePath))
-			);
-		}
-
-		return fileList;
-	}
-
 
 	private async buildFileCtxList(
 		filePaths: string[],

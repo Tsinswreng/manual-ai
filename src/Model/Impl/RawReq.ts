@@ -1,5 +1,5 @@
 import { IFromEtToYaml } from "../IFromEtToYaml";
-import { IRawReq, IFiles, IRegexsObslt } from "../RawReq";
+import { IRawReq, IFiles, IRegexsObslt, IRegexMatch } from "../RawReq";
 import { parse, Document } from 'yaml';
 import { yamlDocToStr } from "./yamlMultiLine";
 // 基础实现类，提供通用的 toYaml 和 fromYaml 方法
@@ -17,29 +17,17 @@ return yamlDocToStr(doc);
 	}
 }
 
-// 正则表达式配置实现
-export class Regexs extends BaseYaml implements IRegexsObslt {
-	includes: string[] = [];
-	excludes: string[] = [];
-
-	constructor(includes?: string[], excludes?: string[]) {
-		super();
-		if (arguments.length === 0) { return; }
-		if (includes !== undefined) this.includes = includes;
-		if (excludes !== undefined) this.excludes = excludes;
-	}
-}
 
 // 文件配置实现
 export class Files extends BaseYaml implements IFiles {
 	paths: string[] = [];
-	
+	regex: IRegexMatch[] = [];
 
-	constructor(paths?: string[], regex?: IRegexsObslt) {
+	constructor(paths?: string[], regex?: IRegexMatch[]) {
 		super();
 		if (arguments.length === 0) { return; }
 		if (paths !== undefined) this.paths = paths;
-		if (regex !== undefined) this.regexObslt = regex;
+		if (regex !== undefined) this.regex = regex;
 	}
 }
 
@@ -56,10 +44,12 @@ export class RawReq extends BaseYaml implements IRawReq {
 	}
 	static mkTemplate(){
 		const r = new this();
-		r.files.paths = [""];
-		r.files.regexObslt = new Regexs();
-		r.files.regexObslt.includes = [""]
-		r.files.regexObslt.excludes = [""]
+	r.files.paths = [""];
+	r.files.regex = [{
+		rootDir: "",
+		includes: [""],
+		excludes: [""]
+	}];
 		r.text = "\n"
 		return r
 	}

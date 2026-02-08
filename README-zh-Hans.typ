@@ -100,6 +100,9 @@ Manual-AI 是一款 VSCode 扩展。通过结构化yaml数据交互, 用户能�
       I[seekDef],
     )
   ]
+  #H[从选中区域便捷生成请求文本][
+    当前您可以配合使用 `Copy With Line Numbers` 插件 达到近似效果
+  ]
 
 ]
 
@@ -110,3 +113,4 @@ Manual-AI 是一款 VSCode 扩展。通过结构化yaml数据交互, 用户能�
   ```
   输出产物在项目根目录
 ]
+

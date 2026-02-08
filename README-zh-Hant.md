@@ -67,6 +67,10 @@ Manual-AI 是一款 VSCode 擴展。通過結構化yaml數據交互, 用戶能�
 1. readFiles
 2. seekDef
 
+### 從選中區域便捷生成請求文本
+
+當前您可以配合使用 `Copy With Line Numbers` 插件 達到近似效果
+
 ## 從源碼構建
 
 ```bash

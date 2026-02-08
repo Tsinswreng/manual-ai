@@ -1,6 +1,7 @@
 //git log -p origin/master..master > log
 
-#H[2026_0208_152951][
+#H[2026_0208_154823][
+- 0.0.6
 - 跳過rootDir爲空字串者
 ]
 

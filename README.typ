@@ -7,7 +7,7 @@
   }
 ]
 
-Manual-AI is a VSCode extension. Through structured YAML data interaction, users can utilize AI large models on web pages, integrating the large models with the editor to perform operations such as code modification, achieving a programming experience similar to an AI Agent.
+Manual-AI is a VSCode extension. Through structured YAML data interaction, users can utilize AI LLMs on web pages, integrating the LLMs with the editor to perform operations such as code modification, achieving a programming experience similar to an AI Agent.
 #H[Extension Overview][
   Most existing VSCode-integrated AI programming solutions (using plug-in-built models or self-configured third-party API keys) require payment; while web-based AI often offers free interaction but lacks structured interaction capabilities with the VSCode editor. This plug-in fills this gap, allowing users to achieve an AI Agent-like programming experience for free with web-based AI.
 ]
@@ -65,19 +65,19 @@ Manual-AI is a VSCode extension. Through structured YAML data interaction, users
       ```
     ],
     I[Generate Request Text][
-      Execute the `ManualAi-MkInitReq` command, which will generate request text for the large model and copy it to the clipboard. The generated text will include the system prompt.
-      The default system prompt requires the large model to respond in the agreed YAML format for subsequent program parsing.
+    Execute the `ManualAi-MkInitReq` command, which will generate request text for the LLM and copy it to the clipboard. The generated text will include the system prompt.
+    The default system prompt requires the LLM to respond in the agreed YAML format for subsequent program parsing.
       
-      If you don't need to include the system prompt, use the `ManualAi-MkReq` command. This is suitable for follow-up questions in the same conversation (i.e., the large model has already seen the system prompt).
+    If you don't need to include the system prompt, use the `ManualAi-MkReq` command. This is suitable for follow-up questions in the same conversation (i.e., the LLM has already seen the system prompt).
       
       The generated request text will include the file content of all file contexts, along with line numbers and error diagnostics obtained from the VSCode API.
     ],
     I[Send Request Text to the Large Model][
-      Open the large model in a web page, paste the text, send it, and wait for a response.
+      Open the LLM in a web page, paste the text, send it, and wait for a response.
     ],
     I[Execute Large Model Operations][
-      Copy the large model's response text to the clipboard and execute the `ManualAi-ExeOp` command. The extension will parse the response text and execute the corresponding write operations.
-      The response format of web-based large models may be invalid YAML syntax (e.g., the large model may wrap the YAML in code blocks or add extra descriptive text, even though we have emphasized these rules in the default prompt, the large model may still ignore them). In this case, you may need to manually fix some errors to avoid parsing failures.
+      Copy the LLM's response text to the clipboard and execute the `ManualAi-ExeOp` command. The extension will parse the response text and execute the corresponding write operations.
+      The response format of web-based LLMs may be invalid YAML syntax (e.g., the LLM may wrap the YAML in code blocks or add extra descriptive text, even though we have emphasized these rules in the default prompt, the LLM may still ignore them). In this case, you may need to manually fix some errors to avoid parsing failures.
 
       *Before executing operations, it is strongly recommended that you use version control and make backups.*
     ],
@@ -93,7 +93,7 @@ Manual-AI is a VSCode extension. Through structured YAML data interaction, users
 
 
 #H[To-be-Implemented Features][
-  #H[Support File Reading-related Operation Types in Large Model Responses][
+  #H[Support File Reading-related Operation Types in LLM Responses][
     #enum(
       I[readFiles],
       I[seekDef],

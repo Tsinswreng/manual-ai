@@ -1,3 +1,23 @@
+//git log -p origin/master..master > log
+#H[2026_0208_132344][
+- v0.0.5
+改RawReq結構、除蠹芝regex理則ʹ謬
+```yaml
+files:
+  paths:
+    - ""
+  regex:
+    - rootDir: ""
+      includes:
+        - ""
+      excludes:
+        - ""
+text: |+
+  
+
+```
+]
+
 #H[2026_0208_090123][
 - v0.0.4
 ````md

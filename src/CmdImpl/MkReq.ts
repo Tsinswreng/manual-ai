@@ -8,15 +8,16 @@ export const cmdMkReq = async () => {
 	try {
 		// 获取当前编辑器的取消令牌
 		const ct = new vscode.CancellationTokenSource().token;
-		
+
 		// 从剪贴板读取内容作为RawReq输入
 		const yamlContent = await vscode.env.clipboard.readText();
-		
-		if(yamlContent == void 0 || yamlContent.trim() == ''){
-			vscode.window.showErrorMessage('剪贴板内容为空，无法生成请求');
+
+		if (yamlContent == void 0 || yamlContent.trim() == '') {
+			vscode.window.showErrorMessage('Clipboard is empty, cannot generate request');
+
 			return;
 		}
-		
+
 		// 反序列化为 RawReq 对象
 		const rawReq = new RawReq();
 		rawReq.fromYaml(yamlContent);
@@ -37,8 +38,10 @@ export const cmdMkReq = async () => {
 		await vscode.env.clipboard.writeText(finalReqYaml);
 
 		// 显示成功信息
-		vscode.window.showInformationMessage('RawReq 转换成功，已写入 FinalReq 文件，FinalReq 内容已复制到剪贴板');
+		vscode.window.showInformationMessage('RawReq converted successfully, written to FinalReq file, FinalReq content copied to clipboard');
+
 	} catch (error) {
-		vscode.window.showErrorMessage(`GenReq Failed: ${(error as Error).message}`);
+		vscode.window.showErrorMessage(`Failed to generate request: ${(error as Error).message}`);
+
 	}
 };

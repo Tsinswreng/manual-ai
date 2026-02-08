@@ -1,7 +1,7 @@
 /* 
 vsce package
 */
-//TODO GenReq旹 彈窗㕥指定路徑、不輸則用默認路徑
+
 import * as vscode from 'vscode';
 import { cmdExeOpByPath } from './CmdImpl/ExeOpByPath';
 import { cmdExeOp } from './CmdImpl/ExeOp';

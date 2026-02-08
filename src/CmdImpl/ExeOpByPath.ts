@@ -21,13 +21,13 @@ export const cmdExeOpByPath = async () => {
 	try {
 		// 获取当前编辑器的取消令牌
 		const ct = new vscode.CancellationTokenSource().token;
-		
+
 		// 确保文件存在
 		await ensureFile(filePath, ct);
-		
+
 		// 读取 YAML 文件内容
 		const yamlContent = await fs.readFile(filePath, 'utf8');
-		
+
 		// 反序列化为 AiResp 对象
 		const aiResp = new AiResp();
 		aiResp.fromYaml(yamlContent);
@@ -44,8 +44,10 @@ export const cmdExeOpByPath = async () => {
 		}
 
 		// 显示成功信息
-		vscode.window.showInformationMessage(`成功应用了 ${writeOperations.length} 个更改`);
+		vscode.window.showInformationMessage(`Successfully applied ${writeOperations.length} changes`);
+
 	} catch (error) {
-		vscode.window.showErrorMessage(`应用更改失败: ${(error as Error).message}`);
+		vscode.window.showErrorMessage(`Failed to apply changes: ${(error as Error).message}`);
+
 	}
 };

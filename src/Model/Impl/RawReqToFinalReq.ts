@@ -1,4 +1,4 @@
-import { IFiles, IRawReq, IRegexs } from "../RawReq";
+import { IFiles, IRawReq, IRegexsObslt } from "../RawReq";
 import { IFinalReq, IFileCtx } from "../FinalReq";
 import { FinalReq, FileCtx } from "./FinalReq";
 import { LineNumAttacher } from "../../Tools/ILineNumAttacher";
@@ -91,8 +91,7 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 	 * @returns 去重后的目标文件绝对/相对路径数组
 	 */
 	private async resolveFilePaths(files: IFiles): Promise<string[]> {
-		const { paths = [], regex = {} } = files;
-		const { includes, excludes } = regex;
+		const { paths = [], regexObslt: regex = {} } = files;
 
 		// 1. 解析glob通配符，获取初始文件列表
 		let fileList: string[] = [];
@@ -105,8 +104,8 @@ export class RawReqToFinalReqConvtr implements IRawReqToFinalReqConvtr {
 		}
 
 		// 2. 应用正则过滤（includes->保留，excludes->排除）
-		if (files.regex != null) {
-			fileList = this.filterByRegex(fileList, files.regex.includes, files.regex.excludes);
+		if (files.regexObslt != null) {
+			fileList = this.filterByRegex(fileList, files.regexObslt.includes, files.regexObslt.excludes);
 		}
 
 

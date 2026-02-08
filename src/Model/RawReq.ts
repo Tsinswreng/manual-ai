@@ -1,11 +1,21 @@
 import { NullableList } from "../NullableList"
 import { IFromEtToYaml } from "./IFromEtToYaml"
 
-export interface IRegexs{
+/** @deprecated  */
+export interface IRegexsObslt{
 	/** 包含的文件 如 [".*svc.*ts$"] */
 	includes?:string[]
 	/** 排除的文件 */
 	excludes?:string[]
+}
+
+export interface IRegexMatch{
+	/** 查找操作所在的根目錄 */
+	rootDir: string
+	/** 包含的文件 */
+	includes: string[]
+	/** 排除的文件 */
+	excludes: string[]
 }
 
 export interface IFiles{
@@ -16,7 +26,9 @@ export interface IFiles{
 	 * 若regex.includes == null 則regex.includes不生效、regex.excludes同理
 	 * 若regex.includes中 有元素爲null或空字符串 則該元素不生效、regex.excludes同理
 	 */
-	regex?: IRegexs
+	/** @deprecated  */
+	regexObslt?: IRegexsObslt
+	regex: IRegexMatch[]
 }
 
 

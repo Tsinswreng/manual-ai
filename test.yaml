@@ -1,42 +1,10 @@
-
-operations:
-  # Line-based replacement (for initial edits)
-  - type: replaceByLine
-    # if path does not exist, it will be created. if you want to create new file, just set path to the new file name and set both startLine and endLine to 1.
-    path: e:/code/src/components/Button.tsx
-    replace:
-      - startLine: 15       # starts from 1, included, can be larger than file length
-        endLine: 23         # included, can be larger than file length
-        data:
-          baseIndent: "    " # base indent for the content, which means each line will have another "    " at the beginning
-          # content can be null, which means to delete from startLine to endLine
-          content: |+
-            const handleClick = () => {
-                console.log("clicked");
-                setState(prev => !prev);
-            };
-          #~content
-        #~data
-      #~-
-
----
-# 1. 顶层锚点：所有替换内容抽离到最外层，全局可引用
-buttonClickLogic: &buttonClickLogic |+
-  const handleClick = () => {
-    console.log("clicked");
-    setState(prev => !prev);
-  };
-
-
-
-# 2. 核心操作配置（引用顶层锚点）
-operations:
-  - type: replaceByLine
-    path: e:/code/src/components/Button.tsx
-    replace:
-      - startLine: 15       # 起始行（从1开始）
-        endLine: 23         # 结束行
-        data:
-          baseIndent: "    " # 统一添加的外层缩进
-          content: *buttonClickLogic # 引用顶层锚点
-
+files:
+  paths:
+    - E:\_code\ManualAi\manual-ai\src\extension.ts
+    - E:\_code\ManualAi\manual-ai\src\CmdImpl\*
+  regex:
+    includes:
+      - E:/_code/ManualAi/manual-ai/src/Model/.*\.ts$
+    excludes:
+      - E:/_code/ManualAi/manual-ai/src/Model/Impl.*
+text: |+

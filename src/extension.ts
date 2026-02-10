@@ -8,6 +8,7 @@ import { cmdExeOp } from './CmdImpl/ExeOp';
 import { cmdMkCommonLlmReq } from './CmdImpl/MkCommonLlmReq';
 import { cmdMkReqTemplate } from './CmdImpl/MkReqTemplate';
 import { cmdMkReq } from './CmdImpl/MkReq';
+import { cmdMkInitReq } from './CmdImpl/MkInitReq';
 function c(s:string){
 	return "manual-ai."+s
 }
@@ -26,18 +27,17 @@ export const CmdNames = {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-	let disposable1 = vscode.commands.registerCommand(CmdNames.ExeOpByPath, cmdExeOpByPath);
-	let disposable2 = vscode.commands.registerCommand(CmdNames.MkCommonLlmReq, cmdMkCommonLlmReq);
-	let disposable3 = vscode.commands.registerCommand(CmdNames.ExeOp, cmdExeOp);
-	let disposable4 = vscode.commands.registerCommand(CmdNames.MkReq, cmdMkReq);
-	let disposable5 = vscode.commands.registerCommand(CmdNames.MkReqTemplate, cmdMkReqTemplate);
-	
-	context.subscriptions.push(disposable1);
-	context.subscriptions.push(disposable2);
-	context.subscriptions.push(disposable3);
-	context.subscriptions.push(disposable4);
-	context.subscriptions.push(disposable5);
-	
+
+function r(cmdName:string, cmd: () => Promise<void>){
+	context.subscriptions.push(vscode.commands.registerCommand(cmdName, cmd))
+}
+r(CmdNames.ExeOpByPath, cmdExeOpByPath)
+r(CmdNames.MkCommonLlmReq, cmdMkCommonLlmReq)
+r(CmdNames.ExeOp, cmdExeOp)
+r(CmdNames.MkReq, cmdMkReq)
+r(CmdNames.MkInitReq, cmdMkInitReq)
+r(CmdNames.MkReqTemplate, cmdMkReqTemplate)
+
 }
 
 export function deactivate() {}

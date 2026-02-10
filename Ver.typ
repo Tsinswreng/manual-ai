@@ -1,5 +1,12 @@
 //git log -p origin/master..master > log
 
+#H[2026_0210_103145][
+- 0.0.7
+- 原ʹ MkInitReq 命令 更名作 MkCommonLlmReq命令(不建議用)
+- 製˪新ʹ MkInitReq 命令、 其實現爲 直ᵈ把系統提示詞拼到 MkReq 前、㕥減縮進數
+- 同步最新默認系統提示詞、減行數與縮進、強調yaml多行文本塊與縮進
+]
+
 #H[2026_0208_154823][
 - 0.0.6
 - 跳過rootDir爲空字串者

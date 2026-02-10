@@ -42,6 +42,8 @@ operations:
           baseIndent: "    " # base indent for the content, which means each line will have another "    " at the beginning
           # content can be null, which means to delete from startLine to endLine
           content: *__content1 # reference to the content anchor defined above
+          # we advise you to put multiline content in a separate anchor and reference it in the main YAML structure.
+          # you can also directly put content in the main YAML structure, but it's not recommended, since it's hard to maintain and read.
           #~content
         #~data
       #~-
@@ -109,37 +111,63 @@ Remove all comments from your final output
 
 #H[YAML Multi-line Block Scalar Syntax Rules][
 ```yaml
-  mltiLine: |+ # in the content each line should indented one more layer using 2 spaces.
+# in the content, each line should be indented one more layer using 2 spaces,
+# THE INITIAL 2-SPACE INDENT IS THE TOKEN FOR YAML's MULTI LINE SYNTAX, NOT THE INDENT FOR THE CONTENT
+__content1: &__content1 |+
   123
   abc
 foo: bar
 ```
+
 this is equivalent to
 ```json
 {
 // if you use |+, there must be at least one \n at the end
-// you can see no additional indent before 123 and abc
-  "multiLine": "123\nabc\n",
+// since THE INITIAL 2-SPACE INDENT IS THE TOKEN FOR YAML's MULTI LINE SYNTAX, NOT THE INDENT FOR THE CONTENT,
+// you can see no additional indent before 123 and abc after parsing
+  "__content1": "123\nabc\n",
   "foo": "bar"
 }
 ```
 
- #H[the following is **illegal**][
-  ```yaml
-  multiLine: |+
-  foo: bar
-  ```
-  because multi-line block must have at least one line of content.
+#H[Illegal example 1][
+```yaml
+__content1: &__content1 |+
+foo: bar
+```
+because multi-line block must have at least one line of content.
+
+if you want to represent an empty string, use the following instead:
+```yaml
+__content1: &__content1 ""
+foo: bar
+```
+
 ]
 
- if you want to represent an empty string, use
+#H[Illegal example 2][
 ```yaml
-multiLine: ""
+__content1: &__content1 |+
+	if(cond){
+		continue
+	}
+foo: bar
+```
+this is illegal because
+in the content, each line should be indented one more layer using 2 spaces,
+THE INITIAL 2-SPACE INDENT IS THE TOKEN FOR YAML's MULTI LINE SYNTAX, NOT THE INDENT FOR THE CONTENT
+
+you should keep the initial 2-space indent and then put your own content behind:
+```yaml
+__content1: &__content1 |+
+  	if(cond){
+  		continue
+  	}
 foo: bar
 ```
 ]
 
-
+]
 
 Ensure proper indentation
 
@@ -152,23 +180,16 @@ Ensure proper indentation
     when use `replaceByLine`, for consecutive lines, you must set `startLine` and `endLine` to the corressponding range.
     #H[Correct example][
 ```yaml
-- type: replaceByLine
-  path: e:/code/src/components/Button.tsx
-  replace:
-    - startLine: 1
-      endLine: 2
-      data:
-        baseIndent: ""
-        content: |+
-          using System;
-          using System.Collections.Generic;
-        #~content
-      #~data
-    #~-
-  #~replace
-#~-
+- startLine: 1
+  endLine: 2
+  data:
+    baseIndent: ""
+    content: |+
+      using System;
+      using System.Collections.Generic;
 ```
-[Incorrect example][
+    ]
+#H[Incorrect example][
 ```yaml
 - type: replaceByLine
   path: e:/code/src/components/Button.tsx
@@ -179,20 +200,12 @@ Ensure proper indentation
         baseIndent: ""
         content: |+
           using System;
-        #~content
-      #~data
-    #~-
     - startLine: 2
       endLine: 2
       data:
         baseIndent: ""
         content:  |+
             using System.Collections.Generic;
-        #~content
-      #~data
-    #~-
-  #~replace
-#~-
 ```
     ]
   ]
@@ -221,6 +234,7 @@ Ensure proper indentation
 
     #H[Correct example][
 ```yaml
+# keep the initial 2-space indent for yaml's syntax and then put your own content behind:
 __content1: &__content1 |+
   foreach(var item in list){
   	handle(item);
@@ -235,12 +249,6 @@ operations:
         data:
           baseIndent: "\t\t\t\t\t" # 5 tabs for indent
           content: *__content1
-          #~content
-        #~data
-      #~-
-    #~replace
-  #~-
-#~operations
 ```
     ]
 
@@ -248,7 +256,7 @@ operations:
 
     #H[Correct example 2 of directly adding indent to the content (not recommended)][
 ```yaml
-# directly add indent to the content
+# directly add indent to the content after keeping the initial 2-space indent for yaml's syntax:
 __content1: &__content1 |+
   					foreach(var item in list){
   						handle(item);
@@ -263,12 +271,6 @@ operations:
         data:
           baseIndent: ""
           content: *__content1
-          #~content
-        #~data
-      #~-
-    #~replace
-  #~-
-#~operations
 ```
     ]
 
@@ -278,17 +280,14 @@ operations:
 
     #H[Incorrect example 1][
 ```yaml
-#...
+__content1: &__content1 |+
+  foreach(var i in list){
+  	handle(i);
+  }
 data:
   baseIndent: ""
-  content: |+
-    foreach(var i in list){
-    	handle(i);
-    }
-  #~content
-#~data
+  content: *__content1
 ```
-
       in this way, after deserialize, it would be `{data: "foreach(var item in list){"` without any indentation. this is incorrect
     ]
 
@@ -296,58 +295,8 @@ data:
 
 ]
 
-#H[Yaml Anchor][
-we advise you to put multiline content in a separate anchor and reference it in the main YAML structure.
 
-  #H[e.g][
-```yaml
-# content anchors to ref:
-__content1: &__content1 |+
-  const handleClick = () => {
-      console.log("clicked");
-      setState(prev => !prev);
-  };
-#~__content1
 
-operations:
-  - type: replaceByLine
-    path: E:/code/src/components/Button.tsx
-    replace:
-      - startLine: 2
-        endLine: 5
-        data:
-          baseIndent: "    "
-          content: *__content1 # reference to the content anchor defined above
-```
-  ]
-
-  you can also directly put content in the main YAML structure, but it's not recommended, since it's hard to maintain and read.
-  #H[directly put content in the main YAML structure(not recommended)][
-```yaml
-operations:
-  - type: replaceByLine
-    path: E:/code/src/components/Button.tsx
-    replace:
-      - startLine: 2
-        endLine: 5
-        data:
-          baseIndent: "    "
-          content: |+
-            const handleClick = () => {
-                console.log("clicked");
-                setState(prev => !prev);
-            };
-          #~content
-        #~data
-      #~-
-    #~replace
-  #~-
-#~operations
-```
-  ]
-  whether to use anchor or not, you still need to keep correct indent
-
-]
 
 #H[Key requirements:][
 - you operations should either be to read files(readFiles, seekDef, etc. ) or be to write files. do not mix

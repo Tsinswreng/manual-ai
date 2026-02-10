@@ -5,7 +5,7 @@ vsce package
 import * as vscode from 'vscode';
 import { cmdExeOpByPath } from './CmdImpl/ExeOpByPath';
 import { cmdExeOp } from './CmdImpl/ExeOp';
-import { cmdMkInitReq } from './CmdImpl/MkInitReq';
+import { cmdMkCommonLlmReq } from './CmdImpl/MkCommonLlmReq';
 import { cmdMkReqTemplate } from './CmdImpl/MkReqTemplate';
 import { cmdMkReq } from './CmdImpl/MkReq';
 function c(s:string){
@@ -16,16 +16,18 @@ export const CmdNames = {
 	ExeOpByPath: c("ExeOpByPath"),
 	/** 讀貼板內容執行操作 */
 	ExeOp: c("ExeOp"),
-	/** 產生初始請求(FinalReq 和 CommonLlmReq)、最終剪貼板內容爲 CommonLlmReq */
-	MkInitReq: c("MkInitReq"),
+	/** 生成Llm請求體格式的yaml、會導致文本塊縮進過多 效果不佳 不建議用 */
+	MkCommonLlmReq: c("MkCommonLlmReq"),
 	/** 產生請求(FinalReq)、最終剪貼板內容爲 FinalReq*/
 	MkReq: c("MkReq"),
+	/** 在MkReq之前再帶上提示詞 */
+	MkInitReq: c("MkInitReq"),
 	MkReqTemplate: c("MkReqTemplate"),
 }
 
 export function activate(context: vscode.ExtensionContext) {
 	let disposable1 = vscode.commands.registerCommand(CmdNames.ExeOpByPath, cmdExeOpByPath);
-	let disposable2 = vscode.commands.registerCommand(CmdNames.MkInitReq, cmdMkInitReq);
+	let disposable2 = vscode.commands.registerCommand(CmdNames.MkCommonLlmReq, cmdMkCommonLlmReq);
 	let disposable3 = vscode.commands.registerCommand(CmdNames.ExeOp, cmdExeOp);
 	let disposable4 = vscode.commands.registerCommand(CmdNames.MkReq, cmdMkReq);
 	let disposable5 = vscode.commands.registerCommand(CmdNames.MkReqTemplate, cmdMkReqTemplate);

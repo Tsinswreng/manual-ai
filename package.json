@@ -37,6 +37,10 @@
       {
         "command": "manual-ai.MkInitReq",
         "title": "ManualAi-MkInitReq"
+      },
+      {
+        "command": "manual-ai.MkCommonLlmReq",
+        "title": "ManualAi-MkCommonLlmReq"
       }
     ]
   },

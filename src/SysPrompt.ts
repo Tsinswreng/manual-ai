@@ -1,3 +1,19 @@
+import * as fs from "fs/promises" 
+import { CT } from "./CT";
+import { InteractFilesGetter } from "./InteractFiles";
+import { ensureFile } from "./Tools/FileUtils";
+
+export async function getSysPrompt(ct?:CT){
+    // 添加系统角色消息
+    const sysPromptFilePath = InteractFilesGetter.inst.getInteractFiles().SysPrompt;
+    const exists = await ensureFile(sysPromptFilePath, ct);
+    if (!exists) {
+      fs.writeFile(sysPromptFilePath, DfltSysPrompt, { encoding: "utf8" })
+    }
+    const sysPromptContent = await fs.readFile(sysPromptFilePath, "utf8");
+		return sysPromptContent
+}
+
 export const DfltSysPrompt = 
 `System Prompt:
 

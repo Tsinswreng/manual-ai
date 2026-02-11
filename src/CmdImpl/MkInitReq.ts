@@ -3,7 +3,8 @@ import { RawReq } from '../Model/Impl/RawReq';
 import { RawReqToFinalReqConvtr } from '../Model/Impl/RawReqToFinalReq';
 import { InteractFilesGetter } from '../InteractFiles';
 import { writeEnsuredFile } from '../Tools/FileUtils';
-import { DfltSysPrompt } from '../SysPrompt';
+import { getSysPrompt } from '../SysPrompt';
+
 
 export const cmdMkInitReq = async () => {
 	try {
@@ -29,8 +30,8 @@ export const cmdMkInitReq = async () => {
 
 		// 序列化为 YAML 字符串
 		const finalReqYaml0 = finalReq.toYaml();
-		
-		const finalReqYaml = DfltSysPrompt+'\n'+finalReqYaml0
+		const sysPrompt = await getSysPrompt(void 0)
+		const finalReqYaml = sysPrompt+'\n'+finalReqYaml0
 
 		// 获取交互文件路径
 		const interactFiles = InteractFilesGetter.inst.getInteractFiles();

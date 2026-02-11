@@ -34,7 +34,7 @@ function r(cmdName:string, cmd: () => Promise<void>){
 }
 r(CmdNames.ExeOpByPath, cmdExeOpByPath)
 r(CmdNames.MkCommonLlmReq, cmdMkCommonLlmReq)
-r(CmdNames.ExeOpYaml, cmdExeOp)
+r(CmdNames.ExeOp, cmdExeOp)
 r(CmdNames.ExeOpYaml, cmdExeOpYaml)
 r(CmdNames.MkReq, cmdMkReq)
 r(CmdNames.MkInitReq, cmdMkInitReq)

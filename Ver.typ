@@ -1,6 +1,6 @@
 //git log -p origin/master..master > log
 
-#H[2026-02-11T22:09:32.680+08:00_W7-3][
+#H[2026_0211_221128][
 - 0.0.9
 - 用戶裸輸入 亦用 YamlMd格式、不用yaml。斯改動涉及 MkReq, MkInitReq, MkReqTemplate 命令。
 ]

@@ -4,6 +4,7 @@ import { RawReqToFinalReqConvtr } from '../Model/Impl/RawReqToFinalReq';
 import { InteractFilesGetter } from '../InteractFiles';
 import { writeEnsuredFile } from '../Tools/FileUtils';
 import { getSysPrompt } from '../SysPrompt';
+import { yamlMdToYaml } from '../YamlMd/yamlMdToYaml';
 
 
 export const cmdMkInitReq = async () => {
@@ -12,7 +13,8 @@ export const cmdMkInitReq = async () => {
 		const ct = new vscode.CancellationTokenSource().token;
 
 		// 从剪贴板读取内容作为RawReq输入
-		const yamlContent = await vscode.env.clipboard.readText();
+		const yamlMdContent = await vscode.env.clipboard.readText();
+		const yamlContent = await yamlMdToYaml(yamlMdContent, ct);
 
 		if (yamlContent == void 0 || yamlContent.trim() == '') {
 			vscode.window.showErrorMessage('Clipboard is empty, cannot generate request');

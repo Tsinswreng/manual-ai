@@ -18,37 +18,32 @@ Manual-AI 是一款 VSCode 扩展。通过结构化的 YamlMd 数据交互, 用�
 2. 生成用户输入模板
    1. 按`Ctrl+N`、创建一个临时文件
    2. 按`Ctrl+Shift+P`, 输入`ManualAi-MkReqTemplate`, 回车执行命令, 这会生成 供用户输入的yaml模板, 并将其写入剪贴板, 然后您需按`Ctrl+V`把模板粘贴到当前临时文件中
-      ![](assets/2026-02-11-18-26-04.png)```yaml
-      files:
-        paths:
-          - ""
-        regex:
-          - rootDir: ""
-            includes:
-              - ""
-            excludes:
-              - ""
-      text: |+
-      ```
+      ![](assets/2026-02-11-18-26-04.png)
 3. 编辑模板
    需要在files中添加文件上下文。支持添加绝对路径, 带通配符的绝对路径, 正则表达式匹配文件上下文, 并自动读取带行号的文件内容 注意: **不支持相对路径!**
    您可使用Vscode快捷键 Shift+Alt+C 或使用右键菜单方便地复制当前文件的绝对路径，避免手动输入
    ![](assets/2026-02-11-18-28-48.png)例
-   ```yaml
-   files:
-     paths: #所有路径都须为绝对路径。
-       - C:/MyProj/src/xxx.ts # 单个文件
-       - c:\MyProj\src\xxx.ts # 支持小写盘符与反斜杠路径分隔符
-       - C:/MyProj/src/services/* #支持通配符
-     regex: # 正则表达式匹配文件上下文
-       - rootDir: - C:/MyProj/src/ #指定正则表达式搜索的根目录
-         includes: # 包含
-           - .*\.ts$
-         excludes: # 排除
-           - .*\.js$
-   text: |+ # 用自然语言描述的提示词, 使用yaml多行文本块语法 不需转义
-     修改上面文件的编译错误
-   ```
+   ````md
+         ```yaml
+         files:
+           paths: #所有路径都须为绝对路径。
+             - C:/MyProj/src/xxx.ts # 单个文件
+             - c:\MyProj\src\xxx.ts # 支持小写盘符与反斜杠路径分隔符
+             - C:/MyProj/src/services/* #支持通配符
+           regex: # 正则表达式匹配文件上下文
+             - rootDir: - C:/MyProj/src/ #指定正则表达式搜索的根目录
+               includes: # 包含
+                 - .*\.ts$
+               excludes: # 排除
+                 - .*\.js$
+         text: *__text # 用自然语言描述的提示词, 写在下面 markdown 一级标题 # __text下面的代码块中
+         ```
+   
+         # __text
+         ```
+   修改上面文件的编译错误
+         ```
+   ````
 4. 生成请求文本
    先把上一步编辑的yaml请求的全文复制到剪贴板中, 然后执行`ManualAi-MkInitReq`命令、这将生成 面向大模型的请求文本 并 将最终的请求文本写入剪贴板。生成的文本中会带上系统提示词。
    默认的系统提示词会要求大模型以约定的yaml格式输出, 㕥便后续程序解析

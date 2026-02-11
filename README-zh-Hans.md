@@ -24,25 +24,24 @@ Manual-AI 是一款 VSCode 扩展。通过结构化的 YamlMd 数据交互, 用�
    您可使用Vscode快捷键 Shift+Alt+C 或使用右键菜单方便地复制当前文件的绝对路径，避免手动输入
    ![](assets/2026-02-11-18-28-48.png)例
    ````md
-         ```yaml
-         files:
-           paths: #所有路径都须为绝对路径。
-             - C:/MyProj/src/xxx.ts # 单个文件
-             - c:\MyProj\src\xxx.ts # 支持小写盘符与反斜杠路径分隔符
-             - C:/MyProj/src/services/* #支持通配符
-           regex: # 正则表达式匹配文件上下文
-             - rootDir: - C:/MyProj/src/ #指定正则表达式搜索的根目录
-               includes: # 包含
-                 - .*\.ts$
-               excludes: # 排除
-                 - .*\.js$
-         text: *__text # 用自然语言描述的提示词, 写在下面 markdown 一级标题 # __text下面的代码块中
-         ```
-   
-         # __text
-         ```
+   ```yaml
+   files:
+     paths: #所有路径都须为绝对路径。
+       - C:/MyProj/src/xxx.ts # 单个文件
+       - c:\MyProj\src\xxx.ts # 支持小写盘符与反斜杠路径分隔符
+       - C:/MyProj/src/services/* #支持通配符
+     regex: # 正则表达式匹配文件上下文
+       - rootDir: - C:/MyProj/src/ #指定正则表达式搜索的根目录
+         includes: # 包含
+           - .*\.ts$
+         excludes: # 排除
+           - .*\.js$
+   text: *__text # 用自然语言描述的提示词, 写在下面 markdown 一级标题 # __text下面的代码块中
+   ```
+   # __text
+   ```
    修改上面文件的编译错误
-         ```
+   ```
    ````
 4. 生成请求文本
    先把上一步编辑的yaml请求的全文复制到剪贴板中, 然后执行`ManualAi-MkInitReq`命令、这将生成 面向大模型的请求文本 并 将最终的请求文本写入剪贴板。生成的文本中会带上系统提示词。

@@ -49,25 +49,24 @@ Manual-AI is a VSCode extension. Through structured YAML data interaction, users
 
       Example
       ````md
-            ```yaml
-            files:
-              paths: # All paths must be absolute paths.
-                - C:/MyProj/src/xxx.ts # Single file
-                - c:\MyProj\src\xxx.ts # Supports lowercase drive letters and backslash path separators
-                - C:/MyProj/src/services/* # Supports wildcards
-              regex: # Regular expression to match file context
-                - rootDir: - C:/MyProj/src/ # Specify the root directory for regular expression search
-                  includes: # Include
-                    - .*\.ts$
-                  excludes: # Exclude
-                    - .*\.js$
-            text: *__text # Prompt described in natural language, written in the code block under the markdown first-level heading # __text below
-            ```
-
-            # __text
-            ```
+      ```yaml
+      files:
+        paths: # All paths must be absolute paths.
+          - C:/MyProj/src/xxx.ts # Single file
+          - c:\MyProj\src\xxx.ts # Supports lowercase drive letters and backslash path separators
+          - C:/MyProj/src/services/* # Supports wildcards
+        regex: # Regular expression to match file context
+          - rootDir: - C:/MyProj/src/ # Specify the root directory for regular expression search
+            includes: # Include
+              - .*\.ts$
+            excludes: # Exclude
+              - .*\.js$
+      text: *__text # Prompt described in natural language, written in the code block under the markdown first-level heading # __text below
+      ```
+      # __text
+      ```
       Fix compilation errors in the above files
-            ```
+      ```
       ````
     ],
     I[Generate Request Text][

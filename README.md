@@ -25,25 +25,24 @@ You can check the GitHub release section for packaged VSIX files
    You can use the VSCode shortcut Shift+Alt+C or the right-click menu to easily copy the absolute path of the current file to avoid manual input.
    ![](assets/2026-02-11-18-28-48.png)Example
    ````md
-         ```yaml
-         files:
-           paths: # All paths must be absolute paths.
-             - C:/MyProj/src/xxx.ts # Single file
-             - c:\MyProj\src\xxx.ts # Supports lowercase drive letters and backslash path separators
-             - C:/MyProj/src/services/* # Supports wildcards
-           regex: # Regular expression to match file context
-             - rootDir: - C:/MyProj/src/ # Specify the root directory for regular expression search
-               includes: # Include
-                 - .*\.ts$
-               excludes: # Exclude
-                 - .*\.js$
-         text: *__text # Prompt described in natural language, written in the code block under the markdown first-level heading # __text below
-         ```
-   
-         # __text
-         ```
+   ```yaml
+   files:
+     paths: # All paths must be absolute paths.
+       - C:/MyProj/src/xxx.ts # Single file
+       - c:\MyProj\src\xxx.ts # Supports lowercase drive letters and backslash path separators
+       - C:/MyProj/src/services/* # Supports wildcards
+     regex: # Regular expression to match file context
+       - rootDir: - C:/MyProj/src/ # Specify the root directory for regular expression search
+         includes: # Include
+           - .*\.ts$
+         excludes: # Exclude
+           - .*\.js$
+   text: *__text # Prompt described in natural language, written in the code block under the markdown first-level heading # __text below
+   ```
+   # __text
+   ```
    Fix compilation errors in the above files
-         ```
+   ```
    ````
 4. Generate Request Text First copy the full text of the yaml request edited in the previous step to the clipboard, then execute the `ManualAi-MkInitReq` command, which will generate request text for the LLM and copy the final request text to the clipboard. The generated text will include the system prompt.
    The default system prompt requires the LLM to respond in the agreed YAML format for subsequent program parsing.

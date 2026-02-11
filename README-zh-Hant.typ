@@ -47,25 +47,24 @@ Manual-AI 是一款 VSCode 擴展。通過結構化的 YamlMd 數據交互, 用�
 
       例
       ````md
-            ```yaml
-            files:
-              paths: #所有路徑都須爲絕對路徑。
-                - C:/MyProj/src/xxx.ts # 單個文件
-                - c:\MyProj\src\xxx.ts # 支持小寫盤符與反斜槓路徑分隔符
-                - C:/MyProj/src/services/* #支持通配符
-              regex: # 正則表達式匹配文件上下文
-                - rootDir: - C:/MyProj/src/ #指定正則表達式搜索的根目錄
-                  includes: # 包含
-                    - .*\.ts$
-                  excludes: # 排除
-                    - .*\.js$
-            text: *__text # 用自然語言描述的提示詞, 寫在下面 markdown 一級標題 # __text下面的代碼塊中
-            ```
-
-            # __text
-            ```
+      ```yaml
+      files:
+        paths: #所有路徑都須爲絕對路徑。
+          - C:/MyProj/src/xxx.ts # 單個文件
+          - c:\MyProj\src\xxx.ts # 支持小寫盤符與反斜槓路徑分隔符
+          - C:/MyProj/src/services/* #支持通配符
+        regex: # 正則表達式匹配文件上下文
+          - rootDir: - C:/MyProj/src/ #指定正則表達式搜索的根目錄
+            includes: # 包含
+              - .*\.ts$
+            excludes: # 排除
+              - .*\.js$
+      text: *__text # 用自然語言描述的提示詞, 寫在下面 markdown 一級標題 # __text下面的代碼塊中
+      ```
+      # __text
+      ```
       修改上面文件的編譯錯誤
-            ```
+      ```
       ````
     ],
 

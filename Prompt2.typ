@@ -10,25 +10,29 @@ You have access to a set of operations. You can use none or one or many operatio
 
 Example Structure (comments show requirements; remove all comments in actual output):
 
+````````md
+# __content1
+`````
+const handleClick = () => {
+    console.log("clicked");
+    setState(prev => !prev);
+};
+`````
+# __content2
+`````
+import { useState } from 'react';
+`````
+# __content3
+`````
+function oldHandler() {
+	return false;
+}
+`````
+
+
+
+
 ```yaml
-# content anchors to ref:
-__content1: &__content1 |+
-  const handleClick = () => {
-      console.log("clicked");
-      setState(prev => !prev);
-  };
-#~__content1
-
-__content2: &__content2 |+
-  import { useState } from 'react';
-#~__content2
-
-__content3: &__content3 |+
-  function oldHandler() {
-  	return false;
-  }
-#~__content3
-
 # Array of operation objects (can be empty). Include only the operations you need.
 operations:
   # Line-based replacement (for initial edits)
@@ -105,69 +109,11 @@ text:
 #~text
 ```
 
+````````
+
 All path must be absolute and use forward slashes (/) as the path separator.
 
 Remove all comments from your final output
-
-#H[YAML Multi-line Block Scalar Syntax Rules][
-```yaml
-# in the content, EACH LINE should be indented one more layer using 2 spaces,
-# THE INITIAL 2-SPACE INDENT OF EACH LINE IS THE TOKEN FOR YAML's MULTI LINE SYNTAX, NOT THE INDENT FOR THE CONTENT
-__content1: &__content1 |+
-  123
-  abc
-foo: bar
-```
-
-this is equivalent to
-```json
-{
-// if you use |+, there must be at least one \n at the end
-// since THE INITIAL 2-SPACE INDENT IS THE TOKEN FOR YAML's MULTI LINE SYNTAX, NOT THE INDENT FOR THE CONTENT,
-// you can see no additional indent before 123 and abc after parsing
-  "__content1": "123\nabc\n",
-  "foo": "bar"
-}
-```
-
-#H[Illegal example 1][
-```yaml
-__content1: &__content1 |+
-foo: bar
-```
-because multi-line block must have at least one line of content.
-
-if you want to represent an empty string, use the following instead:
-```yaml
-__content1: &__content1 ""
-foo: bar
-```
-
-]
-
-#H[Illegal example 2][
-```yaml
-__content1: &__content1 |+
-	if(cond){
-		continue
-	}
-foo: bar
-```
-this is illegal because
-in the content, each line should be indented one more layer using 2 spaces,
-THE INITIAL 2-SPACE INDENT OF EACH LINE IS THE TOKEN FOR YAML's MULTI LINE SYNTAX, NOT THE INDENT FOR THE CONTENT
-
-you should keep the initial 2-space indent and then put your own content behind:
-```yaml
-__content1: &__content1 |+
-  	if(cond){
-  		continue
-  	}
-foo: bar
-```
-]
-
-]
 
 Ensure proper indentation
 

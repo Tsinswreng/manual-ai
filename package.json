@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
-    "@types/node": "20.x",
+    "@types/node": "^20.19.33",
     "@types/vscode": "^1.97.0",
     "@typescript-eslint/eslint-plugin": "^8.22.0",
     "@typescript-eslint/parser": "^8.22.0",
@@ -66,6 +66,9 @@
   "dependencies": {
     "@types/glob": "^9.0.0",
     "glob": "^13.0.0",
+    "mdast": "^3.0.0",
+    "remark": "^15.0.1",
+    "remark-parse": "^11.0.0",
     "yaml": "^2.8.2"
   }
 }

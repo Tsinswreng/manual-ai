@@ -9,7 +9,7 @@ interface AnchorContent {
 async function yamlMdToYaml(md: string, ct?:CT): Promise<string> {
 	// 新增：动态导入ES模块（替换原1-3行）
 	const { unified } = await import('unified');
-	const remarkParse = await import('remark-parse');
+	const remarkParse = (await import('remark-parse')).default;
 	const { visit } = await import('unist-util-visit');
 	
 	const tree = unified().use(remarkParse).parse(md);

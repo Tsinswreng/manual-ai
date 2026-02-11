@@ -1,15 +1,17 @@
-import { unified } from 'unified';
-import remarkParse from 'remark-parse';
-import { visit } from 'unist-util-visit';
 import type { Root, Code, Heading, Node } from 'mdast';
+import { CT } from '../CT';
 
 interface AnchorContent {
 	name: string;
 	value: string | null;
 }
 
-function yamlMdToYaml(md: string): string {
-	// 解析 markdown
+async function yamlMdToYaml(md: string, ct?:CT): Promise<string> {
+	// 新增：动态导入ES模块（替换原1-3行）
+	const { unified } = await import('unified');
+	const remarkParse = await import('remark-parse');
+	const { visit } = await import('unist-util-visit');
+	
 	const tree = unified().use(remarkParse).parse(md);
 
 	let topYaml = '';
@@ -153,4 +155,3 @@ foreach(var i in list){
 
 console.log(yamlMdToYaml(testMd));
 
-export { yamlMdToYaml };

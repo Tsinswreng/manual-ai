@@ -1,5 +1,11 @@
 //git log -p origin/master..master > log
 
+#H[2026_0211_123332][
+- 0.0.8
+- AI輸入之結構化數據 改用 YamlMd格式、免yaml多行文本塊縮進使AI迷惑、並改提示詞
+- 除蠹芝 MkInitReq命令未從用戶配置中讀系統提示詞
+]
+
 #H[2026_0210_103145][
 - 0.0.7
 - 原ʹ MkInitReq 命令 更名作 MkCommonLlmReq命令(不建議用)

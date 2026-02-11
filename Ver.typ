@@ -1,5 +1,10 @@
 //git log -p origin/master..master > log
 
+#H[2026-02-11T22:09:32.680+08:00_W7-3][
+- 0.0.9
+- 用戶裸輸入 亦用 YamlMd格式、不用yaml。斯改動涉及 MkReq, MkInitReq, MkReqTemplate 命令。
+]
+
 #H[2026_0211_123332][
 - 0.0.8
 - AI輸入之結構化數據 改用 YamlMd格式、免yaml多行文本塊縮進使AI迷惑、並改提示詞

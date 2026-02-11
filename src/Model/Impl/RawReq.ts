@@ -75,14 +75,17 @@ export class RawReq extends BaseYaml implements IRawReq {
 		const yamlStrTemplate = z.mkTemplateYamlStr()
 		//text: |+ 替换成 text: *__text
 		const replacedByAnchor:string = yamlStrTemplate.replace(/text:\s*\|\s*\+/, 'text: *__text'); // 将 text: |+ 替换成 text: *__text
+		const graves3 = "```"
+		return graves3
+		+"yaml\n"
+		+ replacedByAnchor
+		+ graves3+"\n"
+		+ 
+`# __text
+${graves3}
 
-		return replacedByAnchor + 
-		`
-		# __text
-		\`\`\`
-		
-		\`\`\`
-		`
+${graves3}
+`
 	}
 	
 	async fromYamlMd(yamlMd:string, ct?:CT){

@@ -1,7 +1,6 @@
 /* 
 vsce package
 */
-
 import * as vscode from 'vscode';
 import { cmdExeOpByPath } from './CmdImpl/ExeOpByPath';
 import { cmdExeOpYaml } from './CmdImpl/ExeOpYaml';
@@ -9,6 +8,7 @@ import { cmdMkCommonLlmReq } from './CmdImpl/MkCommonLlmReq';
 import { cmdMkReqTemplate } from './CmdImpl/MkReqTemplate';
 import { cmdMkReq } from './CmdImpl/MkReq';
 import { cmdMkInitReq } from './CmdImpl/MkInitReq';
+import { cmdExeOp } from './CmdImpl/ExeOp';
 function c(s:string){
 	return "manual-ai."+s
 }
@@ -34,6 +34,7 @@ function r(cmdName:string, cmd: () => Promise<void>){
 }
 r(CmdNames.ExeOpByPath, cmdExeOpByPath)
 r(CmdNames.MkCommonLlmReq, cmdMkCommonLlmReq)
+r(CmdNames.ExeOpYaml, cmdExeOp)
 r(CmdNames.ExeOpYaml, cmdExeOpYaml)
 r(CmdNames.MkReq, cmdMkReq)
 r(CmdNames.MkInitReq, cmdMkInitReq)

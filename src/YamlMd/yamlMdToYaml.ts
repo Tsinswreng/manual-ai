@@ -6,8 +6,10 @@ interface AnchorContent {
 	value: string | null;
 }
 
-async function yamlMdToYaml(md: string, ct?:CT): Promise<string> {
+
+export async function yamlMdToYaml(md: string, ct?:CT): Promise<string> {
 	// 新增：动态导入ES模块（替换原1-3行）
+	//TODO 緩存導入
 	const { unified } = await import('unified');
 	const remarkParse = (await import('remark-parse')).default;
 	const { visit } = await import('unist-util-visit');

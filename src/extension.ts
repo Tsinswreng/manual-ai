@@ -4,7 +4,7 @@ vsce package
 
 import * as vscode from 'vscode';
 import { cmdExeOpByPath } from './CmdImpl/ExeOpByPath';
-import { cmdExeOp } from './CmdImpl/ExeOp';
+import { cmdExeOpYaml } from './CmdImpl/ExeOpYaml';
 import { cmdMkCommonLlmReq } from './CmdImpl/MkCommonLlmReq';
 import { cmdMkReqTemplate } from './CmdImpl/MkReqTemplate';
 import { cmdMkReq } from './CmdImpl/MkReq';
@@ -16,6 +16,7 @@ export const CmdNames = {
 	/** 按路徑執行操作。若不傳路徑則用默認路徑 */
 	ExeOpByPath: c("ExeOpByPath"),
 	/** 讀貼板內容執行操作 */
+	ExeOpYaml: c("ExeOpYaml"),
 	ExeOp: c("ExeOp"),
 	/** 生成Llm請求體格式的yaml、會導致文本塊縮進過多 效果不佳 不建議用 */
 	MkCommonLlmReq: c("MkCommonLlmReq"),
@@ -33,7 +34,7 @@ function r(cmdName:string, cmd: () => Promise<void>){
 }
 r(CmdNames.ExeOpByPath, cmdExeOpByPath)
 r(CmdNames.MkCommonLlmReq, cmdMkCommonLlmReq)
-r(CmdNames.ExeOp, cmdExeOp)
+r(CmdNames.ExeOpYaml, cmdExeOpYaml)
 r(CmdNames.MkReq, cmdMkReq)
 r(CmdNames.MkInitReq, cmdMkInitReq)
 r(CmdNames.MkReqTemplate, cmdMkReqTemplate)

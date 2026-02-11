@@ -23,6 +23,10 @@
         "title": "ManualAi-ExeOp"
       },
       {
+        "command": "manual-ai.ExeOpYaml",
+        "title": "ManualAi-ExeOpYaml"
+      },
+      {
         "command": "manual-ai.ExeOpByPath",
         "title": "ManualAi-ExeOpByPath"
       },

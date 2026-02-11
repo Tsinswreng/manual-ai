@@ -8,7 +8,7 @@ Manual-AI 是一款 VSCode 擴展。通過結構化的 YamlMd 數據交互, 用�
 
 ### 從vsix安裝
 
-按`Ctrl+Shift+P`:![](assets\2026-02-08-14-54-27.png)然後選擇vsix路徑
+按`Ctrl+Shift+P`:![](assets/2026-02-08-14-54-27.png)然後選擇vsix路徑
 
 可從github release區尋找有無打包好的vsix
 
@@ -18,7 +18,7 @@ Manual-AI 是一款 VSCode 擴展。通過結構化的 YamlMd 數據交互, 用�
 2. 生成用戶輸入模板
    1. 按`Ctrl+N`、創建一個臨時文件
    2. 按`Ctrl+Shift+P`, 輸入`ManualAi-MkReqTemplate`, 回車執行命令, 這會生成 供用戶輸入的yaml模板, 並將其寫入剪貼板, 然後您需按`Ctrl+V`把模板粘貼到當前臨時文件中
-      ![](assets\2026-02-11-18-26-04.png)```yaml
+      ![](assets/2026-02-11-18-26-04.png)```yaml
       files:
         paths:
           - ""
@@ -33,7 +33,7 @@ Manual-AI 是一款 VSCode 擴展。通過結構化的 YamlMd 數據交互, 用�
 3. 編輯模板
    需要在files中添加文件上下文。支持添加絕對路徑, 帶通配符的絕對路徑, 正則表達式匹配文件上下文, 並自動讀取帶行號的文件內容 注意: **不支持相對路徑!**
    您可使用Vscode快捷鍵 Shift+Alt+C 或使用右鍵菜單方便地複製當前文件的絕對路徑，避免手動輸入
-   ![](assets\2026-02-11-18-28-48.png)例
+   ![](assets/2026-02-11-18-28-48.png)例
    ```yaml
    files:
      paths: #所有路徑都須爲絕對路徑。
@@ -83,3 +83,38 @@ vsce package
 ```
 
 輸出產物在項目根目錄
+
+## YamlMd 格式
+
+YamlMd是一種markdown與yaml結合的寫法, 便于在yaml中結合無需額外縮進與轉義的多行文本塊, 可輕鬆解析爲yaml格式
+
+例:
+
+````md
+```yaml
+name: Tsinswreng
+descr: *__content1
+```
+
+# __content1
+```
+aaa
+111
+```
+````
+
+上面的YamlMd解析成yaml後爲:
+
+```yaml
+__content1: &__content1 |+
+  aaa
+  111
+
+name: Tsinswreng
+descr: *__content1
+```
+
+此擴展要求大模型使用此格式輸出響應。具體格式規範可參考
+
+- [默認系統提示詞(typst版)](Prompt/Prompt.typ)
+- [默認系統提示詞(markdown版, 由typst版轉換生成)](Prompt/Prompt.md)
